@@ -124,6 +124,47 @@
     });
   }
 
+  /* ---------- Palette chooser ----------
+     Temporary, for picking a palette. Remove this block, #paletteBar, and
+     the .palette-bar styles once one is chosen. */
+  const paletteBar = document.getElementById('paletteBar');
+  if (paletteBar) {
+    // ground + accent of each palette, mirroring the light tokens in style.css
+    const palettes = ['butter', 'periwinkle', 'sage', 'apricot', 'blush'];
+    const preview = {
+      butter:     ['oklch(0.945 0.055 92)',  'oklch(0.575 0.19 28)'],
+      periwinkle: ['oklch(0.925 0.048 268)', 'oklch(0.635 0.18 32)'],
+      sage:       ['oklch(0.925 0.042 148)', 'oklch(0.585 0.16 42)'],
+      apricot:    ['oklch(0.915 0.062 62)',  'oklch(0.455 0.14 258)'],
+      blush:      ['oklch(0.928 0.045 18)',  'oklch(0.575 0.185 15)'],
+    };
+    let active = 'butter';
+    try {
+      active = localStorage.getItem('palette') || 'butter';
+    } catch (e) { /* private mode */ }
+    if (!palettes.includes(active)) active = 'butter';
+    document.documentElement.dataset.palette = active;
+
+    const swatches = palettes.map((name) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'palette-swatch';
+      b.title = name;
+      b.setAttribute('aria-label', name);
+      b.setAttribute('aria-pressed', String(name === active));
+      const [ground, accent] = preview[name];
+      b.style.background = `linear-gradient(135deg, ${ground} 55%, ${accent} 55%)`;
+
+      b.addEventListener('click', () => {
+        document.documentElement.dataset.palette = name;
+        try { localStorage.setItem('palette', name); } catch (e) { /* ignore */ }
+        swatches.forEach((s) => s.setAttribute('aria-pressed', String(s === b)));
+      });
+      paletteBar.appendChild(b);
+      return b;
+    });
+  }
+
   /* ---------- Smooth corners ----------
      Clipping cuts through a border, so only solid-filled elements get the
      squircle path; outlined ones keep their border-radius. */
