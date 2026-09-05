@@ -282,22 +282,53 @@ ul{ margin:0; padding:0; list-style:none; }
 .fact-value{ font-size:1rem; font-weight:500; }
 @media (max-width:600px){ .fact-grid{ grid-template-columns:1fr; } }
 
-/* ---------- Skills / marquee ---------- */
-.marquee{
-  overflow:hidden; border-top:1px solid var(--line); border-bottom:1px solid var(--line);
-  padding: 22px 0; margin: 36px 0 56px;
+/* ---------- Skills / sticker pile ---------- */
+.sticker-hint{
+  font-family: var(--font-mono); font-size:.78rem; color: var(--ink-soft);
+  margin: 0 0 14px;
 }
-.marquee-track{
-  display:flex; width:max-content; gap: 48px;
-  animation: marquee 26s linear infinite;
+.sticker-pile{
+  position: relative;
+  height: clamp(280px, 34vw, 400px);
+  margin: 0 0 56px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  background-position: -1px -1px;
 }
-.marquee:hover .marquee-track{ animation-play-state: paused; }
-.marquee-track span{
-  font-family: var(--font-display); font-style: italic;
-  font-size: clamp(1.2rem, 3vw, 2rem); color: var(--ink-soft); white-space:nowrap;
+.sticker{
+  position:absolute; top:0; left:0;
+  transform: translateY(-260px);
+  opacity: 0;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: .85rem;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+  cursor: grab;
+  user-select: none;
+  will-change: transform;
 }
-.marquee-track span:nth-child(odd){ color: var(--ink); }
-@keyframes marquee{ from{ transform: translateX(0); } to{ transform: translateX(-50%); } }
+.sticker:active{ cursor: grabbing; }
+.sticker[data-tone="amber"]{ background: var(--amber); }
+.sticker[data-tone="teal"]{ background: var(--teal); }
+.sticker[data-tone="ink"]{ background: var(--ink); color: var(--bg); }
+
+.sticker-pile.static{
+  height: auto; display:flex; flex-wrap:wrap; gap:10px; padding:20px; background-image:none;
+}
+.sticker-pile.static .sticker{
+  position:static; opacity:1; transform:none; cursor:default; box-shadow:none;
+  border: 1px solid var(--line);
+}
+.sticker-pile.static .sticker[data-tone]{ background:transparent; color: var(--ink-soft); }
 
 .skill-cols{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
 .skill-col h3{ font-family: var(--font-mono); font-weight:500; font-size:1rem; margin: 0 0 10px; color: var(--teal); }
