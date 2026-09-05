@@ -124,6 +124,15 @@
     });
   }
 
+  /* ---------- Smooth corners ----------
+     Clipping cuts through a border, so only solid-filled elements get the
+     squircle path; outlined ones keep their border-radius. */
+  if (window.Squircle) {
+    document.querySelectorAll('.btn-primary').forEach((el) => {
+      window.Squircle.apply(el, 'capsule', 12);
+    });
+  }
+
   /* ---------- Mobile menu ---------- */
   const navToggle = document.getElementById('navToggle');
   const mobileMenu = document.getElementById('mobileMenu');

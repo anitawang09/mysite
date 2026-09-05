@@ -58,6 +58,12 @@
       el.style.alignItems = 'center';
       el.style.justifyContent = 'center';
 
+      // smooth (squircle) corners, same geometry as haoqi.design's toolkit —
+      // skipped on outlined stickers, where a clip would cut the border
+      if (window.Squircle && el.dataset.tone !== 'outline') {
+        window.Squircle.apply(el, 'squircle', 14);
+      }
+
       const body = Bodies.rectangle(x, y, w, h, {
         restitution: 0.4,
         friction: 0.35,

@@ -1,39 +1,71 @@
-/* ---------- Tokens ---------- */
+/* ---------- Self-hosted display face ----------
+   Drop a licensed "Elegant Ink" or "Arsenale" file into assets/fonts/ and
+   uncomment — the --font-name stack picks it up automatically, with the
+   Google-hosted script faces below as the fallback.
+
+@font-face{
+  font-family: "Elegant Ink";
+  src: url("../fonts/elegant-ink.woff2") format("woff2");
+  font-display: swap;
+}
+*/
+
+/* ---------- Tokens ----------
+   Colors are authored in OKLCH: one lightness band, moderate chroma, hues
+   spread evenly — playful as a set, composed enough to stay semi-formal.
+   (Same color space as the OKLCH tooling behind haoqi.design.)            */
 :root{
-  --bg: #eff0ea;
-  --surface: #ffffff;
-  --ink: #14171a;
-  --ink-soft: #5b5f58;
-  --line: rgba(20,23,26,0.13);
-  --red: #e30613;        /* Lenis's signature red+black */
+  --bg:        oklch(0.972 0.008 95);
+  --surface:   oklch(1 0 0);
+  --ink:       oklch(0.24 0.02 265);
+  --ink-soft:  oklch(0.53 0.02 265);
+  --line:      oklch(0.24 0.02 265 / 0.14);
+  --grid-line: oklch(0.24 0.02 265 / 0.055);
+  --grid-row:  oklch(0.24 0.02 265 / 0.035);
+
+  /* playful accent set — even hue steps, one L/C band */
+  --red:    oklch(0.60 0.19 27);
+  --gold:   oklch(0.76 0.14 78);
+  --green:  oklch(0.60 0.12 158);
+  --blue:   oklch(0.57 0.14 247);
   --accent: var(--red);
-  --dot: rgba(20,23,26,0.22);
+
+  --font-name: "Elegant Ink", "Arsenale", "Imperial Script", "Parisienne", cursive;
   --font-display: "Newsreader", "Iowan Old Style", serif;
   --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", monospace;
   --container: 1180px;
   --edge: clamp(24px, 6vw, 96px);
+  --grid-step: 104px;
 }
 
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg: #14161a;
-    --surface: #1c1f23;
-    --ink: #f0f1ea;
-    --ink-soft: #a3a89e;
-    --line: rgba(240,241,234,0.14);
-    --red: #ff3b2f;
-    --dot: rgba(240,241,234,0.18);
+    --bg:        oklch(0.19 0.014 265);
+    --surface:   oklch(0.24 0.016 265);
+    --ink:       oklch(0.95 0.008 95);
+    --ink-soft:  oklch(0.72 0.014 265);
+    --line:      oklch(0.95 0.008 95 / 0.15);
+    --grid-line: oklch(0.95 0.008 95 / 0.06);
+    --grid-row:  oklch(0.95 0.008 95 / 0.035);
+    --red:    oklch(0.70 0.18 27);
+    --gold:   oklch(0.82 0.13 78);
+    --green:  oklch(0.72 0.12 158);
+    --blue:   oklch(0.70 0.13 247);
   }
 }
 :root[data-theme="dark"]{
-  --bg: #14161a;
-  --surface: #1c1f23;
-  --ink: #f0f1ea;
-  --ink-soft: #a3a89e;
-  --line: rgba(240,241,234,0.14);
-  --red: #ff3b2f;
-  --dot: rgba(240,241,234,0.18);
+  --bg:        oklch(0.19 0.014 265);
+  --surface:   oklch(0.24 0.016 265);
+  --ink:       oklch(0.95 0.008 95);
+  --ink-soft:  oklch(0.72 0.014 265);
+  --line:      oklch(0.95 0.008 95 / 0.15);
+  --grid-line: oklch(0.95 0.008 95 / 0.06);
+  --grid-row:  oklch(0.95 0.008 95 / 0.035);
+  --red:    oklch(0.70 0.18 27);
+  --gold:   oklch(0.82 0.13 78);
+  --green:  oklch(0.72 0.12 158);
+  --blue:   oklch(0.70 0.13 247);
 }
 
 *{ box-sizing: border-box; }
@@ -56,13 +88,18 @@ ul{ margin:0; padding:0; list-style:none; }
 
 ::selection{ background: var(--red); color:#fff; }
 
-/* ---------- Ambient dot-grid backdrop ---------- */
+/* ---------- Ambient ruled-grid backdrop ---------- */
+/* Column rules carry the layout; row rules are a quieter secondary rhythm. */
 .bg-grid{
-  position: fixed; inset:0; z-index:0; pointer-events:none;
-  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
-  background-size: 26px 26px;
-  -webkit-mask-image: radial-gradient(circle at 50% 35%, black 35%, transparent 78%);
-  mask-image: radial-gradient(circle at 50% 35%, black 35%, transparent 78%);
+  position: fixed; inset: -10vh 0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-row) 1px, transparent 1px);
+  background-size:
+    var(--grid-step) 100%,
+    100% calc(var(--grid-step) * 2);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 14%, black 86%, transparent);
   will-change: transform;
 }
 .page{ position: relative; z-index: 1; }
@@ -111,8 +148,9 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .nav.hide{ transform: translateY(-110%); }
 .nav-logo{
-  font-family: var(--font-mono);
-  font-weight:600; font-size:1rem; letter-spacing: .02em;
+  font-family: var(--font-name);
+  font-weight:400; font-size:1.75rem; line-height:1; letter-spacing: .01em;
+  padding-bottom: 2px;
 }
 .nav-links{ display:flex; align-items:center; gap:32px; font-size:.92rem; font-family: var(--font-mono); }
 .nav-links a{ position:relative; padding:4px 0; color: var(--ink-soft); transition: color .25s ease; }
@@ -158,10 +196,11 @@ ul{ margin:0; padding:0; list-style:none; }
 .hero-bg-word{
   position:absolute; top:52%; left:50%;
   transform: translate(-50%,-50%);
-  font-family: var(--font-mono);
-  font-size: clamp(4rem, 18vw, 14rem);
-  font-weight: 500;
-  letter-spacing: -0.02em;
+  font-family: var(--font-name);
+  font-size: clamp(7rem, 30vw, 24rem);
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
   color: transparent;
   -webkit-text-stroke: 1px var(--line);
   white-space:nowrap;
@@ -268,6 +307,9 @@ ul{ margin:0; padding:0; list-style:none; }
   font-family: var(--font-mono);
   font-size: .95rem; color: var(--red); font-weight:500;
 }
+.index-num[data-tone="gold"]{ color: var(--gold); }
+.index-num[data-tone="green"]{ color: var(--green); }
+.index-num[data-tone="blue"]{ color: var(--blue); }
 .section-head .eyebrow{ margin:0; }
 .section-head .eyebrow::before{ display:none; }
 
@@ -324,9 +366,12 @@ ul{ margin:0; padding:0; list-style:none; }
 }
 .sticker:active{ cursor: grabbing; }
 .sticker[data-tone="red"]{ background: var(--red); }
+.sticker[data-tone="gold"]{ background: var(--gold); color: oklch(0.24 0.02 265); }
+.sticker[data-tone="green"]{ background: var(--green); }
+.sticker[data-tone="blue"]{ background: var(--blue); }
 .sticker[data-tone="ink"]{ background: var(--ink); color: var(--bg); }
 .sticker[data-tone="outline"]{
-  background: var(--bg); color: var(--ink); border: 2px solid var(--red);
+  background: var(--surface); color: var(--ink); border: 2px solid var(--ink);
 }
 
 .sticker-pile.static{
@@ -403,6 +448,13 @@ ul{ margin:0; padding:0; list-style:none; }
 .contact-email:hover{ color: var(--red); border-color: var(--red); }
 .contact-links{ display:flex; justify-content:center; gap: 28px; flex-wrap:wrap; color: var(--ink-soft); font-size:.92rem; font-family: var(--font-mono); }
 .contact-links a:hover{ color: var(--red); }
+.signature{
+  font-family: var(--font-name);
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  line-height: 1;
+  color: var(--ink);
+  margin: 44px 0 0;
+}
 
 /* ---------- Footer ---------- */
 .footer{
