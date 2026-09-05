@@ -3,17 +3,40 @@
 
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  /* ---------- Smooth inertia scrolling (Lenis, with native fallback) ---------- */
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let lenis = null;
+  if (!reducedMotion && typeof Lenis !== 'undefined') {
+    lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => 1 - Math.pow(1 - t, 3),
+      autoRaf: true,
+      anchors: true,
+    });
+  }
+
+  function getScrollTop() {
+    if (lenis) return lenis.scroll;
+    const doc = document.documentElement;
+    return doc.scrollTop || document.body.scrollTop;
+  }
+
+  function getScrollProgress() {
+    if (lenis) return lenis.progress * 100;
+    const doc = document.documentElement;
+    const height = doc.scrollHeight - doc.clientHeight;
+    return height > 0 ? (getScrollTop() / height) * 100 : 0;
+  }
+
   /* ---------- Scroll progress bar ---------- */
   const progressBar = document.getElementById('progressBar');
   const nav = document.getElementById('nav');
+  const bgGrid = document.getElementById('bgGrid');
   let lastScroll = 0;
 
   function onScroll() {
-    const doc = document.documentElement;
-    const scrollTop = doc.scrollTop || document.body.scrollTop;
-    const height = doc.scrollHeight - doc.clientHeight;
-    const pct = height > 0 ? (scrollTop / height) * 100 : 0;
-    progressBar.style.width = pct + '%';
+    const scrollTop = getScrollTop();
+    progressBar.style.width = getScrollProgress() + '%';
 
     nav.classList.toggle('scrolled', scrollTop > 40);
     if (scrollTop > lastScroll && scrollTop > 200) {
@@ -24,6 +47,7 @@
     lastScroll = scrollTop;
 
     updateParallax(scrollTop);
+    updateGrid(scrollTop);
     updateTimeline();
   }
 
@@ -34,6 +58,12 @@
       const speed = parseFloat(el.dataset.speed) || 0.2;
       el.style.transform = `translate(-50%, calc(-50% + ${scrollTop * speed * -0.15}px))`;
     });
+  }
+
+  /* ---------- Parallax on the ambient dot-grid backdrop ---------- */
+  function updateGrid(scrollTop) {
+    if (!bgGrid) return;
+    bgGrid.style.transform = `translateY(${scrollTop * 0.08}px)`;
   }
 
   /* ---------- Reveal on scroll ---------- */
@@ -104,16 +134,20 @@
     a.addEventListener('click', () => mobileMenu.classList.remove('open'));
   });
 
-  /* ---------- Scroll listener (rAF throttled) ---------- */
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        onScroll();
-        ticking = false;
-      });
-      ticking = true;
-    }
-  });
+  /* ---------- Scroll listener ---------- */
+  if (lenis) {
+    lenis.on('scroll', onScroll);
+  } else {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          onScroll();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  }
   onScroll();
 })();

@@ -8,6 +8,7 @@
   --amber: #b9722a;      /* "behavioral" — human signal */
   --teal: #2c6b66;       /* "data" — analytical signal */
   --accent: var(--amber);
+  --dot: rgba(20,23,26,0.22);
   --font-display: "Newsreader", "Iowan Old Style", serif;
   --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
   --font-mono: "IBM Plex Mono", "SF Mono", monospace;
@@ -24,6 +25,7 @@
     --line: rgba(240,241,234,0.14);
     --amber: #e0a154;
     --teal: #6fc2ba;
+    --dot: rgba(240,241,234,0.18);
   }
 }
 :root[data-theme="dark"]{
@@ -34,6 +36,7 @@
   --line: rgba(240,241,234,0.14);
   --amber: #e0a154;
   --teal: #6fc2ba;
+  --dot: rgba(240,241,234,0.18);
 }
 
 *{ box-sizing: border-box; }
@@ -55,6 +58,17 @@ a{ color:inherit; text-decoration:none; }
 ul{ margin:0; padding:0; list-style:none; }
 
 ::selection{ background: var(--amber); color:#fff; }
+
+/* ---------- Ambient dot-grid backdrop ---------- */
+.bg-grid{
+  position: fixed; inset:0; z-index:0; pointer-events:none;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 26px 26px;
+  -webkit-mask-image: radial-gradient(circle at 50% 35%, black 35%, transparent 78%);
+  mask-image: radial-gradient(circle at 50% 35%, black 35%, transparent 78%);
+  will-change: transform;
+}
+.page{ position: relative; z-index: 1; }
 
 /* ---------- Scroll progress ---------- */
 .progress-bar{
@@ -294,11 +308,6 @@ ul{ margin:0; padding:0; list-style:none; }
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 28px 28px;
-  background-position: -1px -1px;
 }
 .sticker{
   position:absolute; top:0; left:0;
@@ -407,7 +416,6 @@ ul{ margin:0; padding:0; list-style:none; }
   html{ scroll-behavior:auto; }
   .hero-title .word{ animation:none; opacity:1; transform:none; }
   .scroll-line i{ animation:none; top:0; }
-  .marquee-track{ animation:none; }
   .reveal{ transition:none; opacity:1; transform:none; }
   .cursor-dot, .cursor-ring{ display:none; }
 }
