@@ -179,8 +179,12 @@ window.HandDrawn = (() => {
             })
           );
         } else {
-          const padX = width * 0.10 + 12;
-          const padY = height * 0.45 + 8;
+          // the loop swings wider than the phrase; on a narrow screen that
+          // swing has to fit the room left either side, or it runs off-page
+          const box = el.getBoundingClientRect();
+          const room = Math.max(4, Math.min(box.left, window.innerWidth - box.right) - 2);
+          const padX = Math.min(width * 0.10 + 12, room);
+          const padY = Math.min(height * 0.45 + 8, 26);
           w = width + padX * 2;
           h = height + padY * 2;
           paths = [ellipse(w / 2, h / 2, w / 2 - 3, h / 2 - 3, { rnd, amp: options.amp ?? 4 })];
