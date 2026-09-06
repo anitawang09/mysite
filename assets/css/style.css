@@ -32,6 +32,9 @@
   --blue: oklch(0.755 0.125 236);
 
   --accent: var(--red);
+  /* derived, so they follow whichever palette is active */
+  --line-strong: color-mix(in srgb, var(--ink) 40%, transparent);
+  --font-hand: "Caveat", "Bradley Hand", cursive;
   --font-name: "Elegant Ink", "Arsenale", "Imperial Script", "Parisienne", cursive;
   --font-display: "Newsreader", "Iowan Old Style", serif;
   --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
@@ -729,3 +732,91 @@ ul{ margin:0; padding:0; list-style:none; }
   transition: color .25s ease, border-color .25s ease;
 }
 .project-links a:hover{ color: var(--red); border-color: var(--red); }
+
+/* ---------- Hand-drawn marks ----------
+   The strokes themselves are generated in assets/js/handdrawn.js — original
+   artwork, drawn from jittered geometry rather than traced from anything. */
+[data-hand]{ position: relative; }
+[data-hand="circle"], [data-hand="underline"]{ display: inline-block; }
+.hd-mark{
+  position: absolute; inset: 0;
+  pointer-events: none;
+  overflow: visible;
+  color: var(--red);
+}
+.hd-underline{ height: 12px; }
+/* the drawn stroke replaces the ruled one */
+.contact-email[data-hand]{ border-bottom: none; padding-bottom: 2px; }
+.hd-rule{ position: static; display:block; width: 100%; color: var(--line-strong); }
+.hd-frame{ color: var(--line-strong); }
+.hd-arrow{ color: var(--gold); }
+@keyframes hd-draw{ to{ stroke-dashoffset: 0; } }
+
+/* the one line worth circling */
+.pull-line{
+  margin: 30px 0 34px;
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.1vw, 1.5rem);
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 640px;
+}
+.pull-line > span{ padding: 2px 4px; }
+
+/* a note scribbled in the margin */
+.hand-note{
+  font-family: var(--font-hand);
+  font-size: 1.35rem;
+  line-height: 1.15;
+  color: var(--ink-soft);
+  transform: rotate(-2.2deg);
+  transform-origin: left center;
+  margin: 0;
+}
+.note-row{
+  display: flex; align-items: flex-end; gap: 14px;
+  margin: 0 0 10px;
+}
+.note-arrow{ width: 54px; height: 34px; flex: none; margin-bottom: 2px; }
+
+/* section divider, drawn not ruled */
+.hand-divider{
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--edge);
+  opacity: .8;
+}
+
+/* ---------- Paper grain ----------
+   A little analog noise so flat color doesn't read as plastic. */
+.grain{
+  position: fixed; inset: 0; z-index: 2;
+  pointer-events: none;
+  opacity: .35;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+/* ---------- Glass ----------
+   Frosted, faintly lit panels — the translucent-plastic mood, in CSS. */
+.sticker-pile{
+  background: linear-gradient(
+    150deg,
+    color-mix(in srgb, var(--surface) 26%, transparent),
+    color-mix(in srgb, var(--surface) 8%, transparent)
+  );
+  backdrop-filter: blur(2px);
+  border-color: transparent;
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--ink) 12%, transparent),
+    0 18px 44px oklch(0 0 0 / 0.10);
+}
+.project:hover{
+  background: color-mix(in srgb, var(--surface) 22%, transparent);
+}
+
+/* things that shouldn't sit perfectly straight */
+.sticker-hint{ transform: rotate(-0.6deg); }
+.index-num{ display:inline-block; transform: rotate(-3deg); }
+.project-tags li:nth-child(2n){ transform: rotate(0.8deg); }
+.project-tags li:nth-child(3n){ transform: rotate(-1.1deg); }

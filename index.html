@@ -7,13 +7,14 @@
 <meta name="description" content="Anita Wang — data and social science student in Amsterdam. I use data to answer questions about people, and turn the answers into clear advice.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Imperial+Script&family=Parisienne&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Imperial+Script&family=Parisienne&family=Caveat:wght@400;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="data:,">
 </head>
 <body>
 
 <div class="bg-grid" id="bgGrid" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 <div class="progress-bar" id="progressBar"></div>
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
@@ -70,6 +71,8 @@
     </div>
   </section>
 
+  <div class="hand-divider" data-hand="rule" aria-hidden="true"></div>
+
   <!-- ABOUT -->
   <section class="section" id="about">
     <div class="section-head">
@@ -83,8 +86,11 @@
       <div class="about-body reveal" data-delay="1">
         <p>
           I'm a bachelor's student in Computational Social Science at the University of Amsterdam,
-          after starting out in Psychology &amp; Health Sciences in Toronto. Put simply: I use data to
-          answer questions about people — what they choose, what stops them, and what would help.
+          after starting out in Psychology &amp; Health Sciences in Toronto — what they choose,
+          what stops them, and what would help.
+        </p>
+        <p class="pull-line">
+          <span data-hand="circle" data-hand-draw>I use data to answer questions about people.</span>
         </p>
         <p>
           I'm fluent in English and Mandarin Chinese and I like working across teams and countries.
@@ -121,8 +127,11 @@
     </div>
     <h2 class="section-title reveal">What I work with.</h2>
 
-    <p class="sticker-hint reveal" data-delay="1">// go on, drag them around</p>
-    <div class="sticker-pile" id="stickerPile" aria-hidden="true">
+    <div class="note-row reveal" data-delay="1">
+      <p class="hand-note">go on — drag them around</p>
+      <span class="note-arrow" data-hand="arrow" aria-hidden="true"></span>
+    </div>
+    <div class="sticker-pile" id="stickerPile" data-hand="frame" aria-hidden="true">
       <div class="sticker" data-tone="red">Python</div>
       <div class="sticker" data-tone="blue">SQL</div>
       <div class="sticker" data-tone="outline">NumPy</div>
@@ -155,13 +164,15 @@
     </div>
   </section>
 
+  <div class="hand-divider" data-hand="rule" aria-hidden="true"></div>
+
   <!-- WORK / PORTFOLIO -->
   <section class="section" id="work">
     <div class="section-head">
       <span class="index-num reveal" data-tone="green">03</span>
       <p class="eyebrow reveal">Selected Work</p>
     </div>
-    <h2 class="section-title reveal">Three projects, three real clients.</h2>
+    <h2 class="section-title reveal">Three projects, three <span data-hand="underline" data-hand-draw>real</span> clients.</h2>
 
     <div class="projects">
 
@@ -231,6 +242,8 @@
     </div>
   </section>
 
+  <div class="hand-divider" data-hand="rule" aria-hidden="true"></div>
+
   <!-- EXPERIENCE -->
   <section class="section" id="experience">
     <div class="section-head">
@@ -287,7 +300,8 @@
       <p class="eyebrow reveal">Contact</p>
     </div>
     <h2 class="contact-title reveal">Let's work<br>together.</h2>
-    <a href="mailto:anita930929@gmail.com" class="contact-email reveal magnetic" data-delay="1">anita930929@gmail.com</a>
+    <a href="mailto:anita930929@gmail.com" class="contact-email reveal magnetic" data-delay="1"
+       data-hand="underline" data-hand-draw data-hand-width="2">anita930929@gmail.com</a>
     <div class="contact-links reveal" data-delay="2">
       <a href="https://www.linkedin.com/in/anita-wang-384592328" target="_blank" rel="noopener" class="magnetic">LinkedIn ↗</a>
       <span>Amsterdam, Netherlands</span>
@@ -310,6 +324,7 @@
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
 <script src="assets/js/squircle.js"></script>
+<script src="assets/js/handdrawn.js"></script>
 <script src="assets/js/stickers.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
