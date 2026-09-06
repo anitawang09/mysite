@@ -130,19 +130,20 @@
   const paletteBar = document.getElementById('paletteBar');
   if (paletteBar) {
     // ground + accent of each palette, mirroring the light tokens in style.css
-    const palettes = ['butter', 'periwinkle', 'sage', 'apricot', 'blush'];
+    const palettes = ['ink', 'butter', 'periwinkle', 'sage', 'apricot', 'blush'];
     const preview = {
+      ink:        ['oklch(0.305 0.055 258)', 'oklch(0.825 0.14 80)'],
       butter:     ['oklch(0.945 0.055 92)',  'oklch(0.575 0.19 28)'],
       periwinkle: ['oklch(0.925 0.048 268)', 'oklch(0.635 0.18 32)'],
       sage:       ['oklch(0.925 0.042 148)', 'oklch(0.585 0.16 42)'],
       apricot:    ['oklch(0.915 0.062 62)',  'oklch(0.455 0.14 258)'],
       blush:      ['oklch(0.928 0.045 18)',  'oklch(0.575 0.185 15)'],
     };
-    let active = 'butter';
+    let active = 'ink';
     try {
-      active = localStorage.getItem('palette') || 'butter';
+      active = localStorage.getItem('palette') || 'ink';
     } catch (e) { /* private mode */ }
-    if (!palettes.includes(active)) active = 'butter';
+    if (!palettes.includes(active)) active = 'ink';
     document.documentElement.dataset.palette = active;
 
     const swatches = palettes.map((name) => {

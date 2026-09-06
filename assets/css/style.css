@@ -11,15 +11,37 @@
 */
 
 /* ---------- Tokens ----------
-   Five palettes, all authored in OKLCH — the color space of the tooling
-   behind haoqi.design. Each keeps its accents in one lightness/chroma band
-   so the set reads playful, while a tinted (not white) ground and a single
-   near-black ink keep it semi-formal.
+   Six palettes, all authored in OKLCH. Each keeps its accents in one
+   lightness/chroma band so the set reads playful, while a single tinted
+   ground and one text color keep it semi-formal.
 
-   Switch with data-palette on <html>: butter | periwinkle | sage | apricot
-   | blush. Butter is the default.                                          */
+   Switch with data-palette on <html>: ink | butter | periwinkle | sage |
+   apricot | blush. Ink — deep blue ground, warm paper text — is default. */
 
 :root{
+  --bg: oklch(0.305 0.055 258);
+  --surface: oklch(0.355 0.05 258);
+  --ink: oklch(0.955 0.018 92);
+  --ink-soft: oklch(0.775 0.022 92);
+  --line: oklch(0.955 0.018 92 / 0.20);
+  --grid-line: oklch(0.955 0.018 92 / 0.085);
+  --grid-row: oklch(0.955 0.018 92 / 0.045);
+  --red: oklch(0.70 0.175 30);
+  --gold: oklch(0.825 0.14 80);
+  --green: oklch(0.745 0.12 160);
+  --blue: oklch(0.755 0.125 236);
+
+  --accent: var(--red);
+  --font-name: "Elegant Ink", "Arsenale", "Imperial Script", "Parisienne", cursive;
+  --font-display: "Newsreader", "Iowan Old Style", serif;
+  --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", monospace;
+  --container: 1180px;
+  --edge: clamp(24px, 6vw, 96px);
+  --grid-step: 104px;
+}
+
+:root[data-palette="butter"]{
   --bg: oklch(0.945 0.055 92);
   --surface: oklch(0.985 0.022 92);
   --ink: oklch(0.25 0.035 62);
@@ -31,15 +53,6 @@
   --gold: oklch(0.70 0.15 68);
   --green: oklch(0.55 0.12 165);
   --blue: oklch(0.52 0.14 245);
-
-  --accent: var(--red);
-  --font-name: "Elegant Ink", "Arsenale", "Imperial Script", "Parisienne", cursive;
-  --font-display: "Newsreader", "Iowan Old Style", serif;
-  --font-body: "IBM Plex Sans", "Helvetica Neue", sans-serif;
-  --font-mono: "IBM Plex Mono", "SF Mono", monospace;
-  --container: 1180px;
-  --edge: clamp(24px, 6vw, 96px);
-  --grid-step: 104px;
 }
 
 :root[data-palette="periwinkle"]{
@@ -100,6 +113,19 @@
 
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
+    --bg: oklch(0.225 0.05 258);
+    --surface: oklch(0.275 0.045 258);
+    --ink: oklch(0.955 0.018 92);
+    --ink-soft: oklch(0.755 0.022 92);
+    --line: oklch(0.955 0.018 92 / 0.18);
+    --grid-line: oklch(0.955 0.018 92 / 0.075);
+    --grid-row: oklch(0.955 0.018 92 / 0.04);
+    --red: oklch(0.71 0.175 30);
+    --gold: oklch(0.83 0.14 80);
+    --green: oklch(0.75 0.12 160);
+    --blue: oklch(0.76 0.125 236);
+  }
+  :root:not([data-theme="light"])[data-palette="butter"]{
     --bg: oklch(0.225 0.03 78);
     --surface: oklch(0.275 0.03 78);
     --ink: oklch(0.95 0.025 92);
@@ -167,6 +193,20 @@
 }
 
 :root[data-theme="dark"]{
+  --bg: oklch(0.225 0.05 258);
+  --surface: oklch(0.275 0.045 258);
+  --ink: oklch(0.955 0.018 92);
+  --ink-soft: oklch(0.755 0.022 92);
+  --line: oklch(0.955 0.018 92 / 0.18);
+  --grid-line: oklch(0.955 0.018 92 / 0.075);
+  --grid-row: oklch(0.955 0.018 92 / 0.04);
+  --red: oklch(0.71 0.175 30);
+  --gold: oklch(0.83 0.14 80);
+  --green: oklch(0.75 0.12 160);
+  --blue: oklch(0.76 0.125 236);
+}
+
+:root[data-theme="dark"][data-palette="butter"]{
   --bg: oklch(0.225 0.03 78);
   --surface: oklch(0.275 0.03 78);
   --ink: oklch(0.95 0.025 92);
@@ -556,14 +596,17 @@ ul{ margin:0; padding:0; list-style:none; }
 .skill-col p{ color: var(--ink-soft); font-size:.96rem; margin:0; }
 @media (max-width: 760px){ .skill-cols{ grid-template-columns:1fr; gap:28px; } }
 
-/* ---------- Projects ---------- */
-.projects{ display:flex; flex-direction:column; gap: 1px; background: var(--line); }
+/* ---------- Projects ----------
+   Dividers live on the rows themselves, so nothing shows through while the
+   cards are still revealing. */
+.projects{ display:flex; flex-direction:column; }
 .project{
-  background: var(--bg);
   display:grid; grid-template-columns: 120px 1fr; gap: 32px;
   padding: 44px 0;
+  border-top: 1px solid var(--line);
   transition: background .4s ease;
 }
+.project:first-child{ border-top: none; }
 .project:hover{ background: var(--surface); }
 .project-num{
   font-family: var(--font-mono); font-size: 1.4rem; color: var(--ink-soft); font-weight:500;
