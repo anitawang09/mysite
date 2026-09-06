@@ -34,6 +34,10 @@
   --accent: var(--red);
   /* derived, so they follow whichever palette is active */
   --line-strong: color-mix(in srgb, var(--ink) 40%, transparent);
+  /* sticker stock: the die-cut border and the ink printed on it */
+  --sticker-paper: oklch(0.96 0.012 92);
+  --ink-deep: oklch(0.22 0.03 258);
+  --pink: oklch(0.78 0.13 355);
   --font-hand: "Caveat", "Bradley Hand", cursive;
   --font-name: "Elegant Ink", "Arsenale", "Imperial Script", "Parisienne", cursive;
   --font-display: "Newsreader", "Iowan Old Style", serif;
@@ -732,6 +736,20 @@ ul{ margin:0; padding:0; list-style:none; }
   transition: color .25s ease, border-color .25s ease;
 }
 .project-links a:hover{ color: var(--red); border-color: var(--red); }
+
+/* ---------- Drawn stickers ----------
+   Art rather than a word tag: no fill of its own, the die-cut edge is part
+   of the drawing. */
+.sticker-art{
+  padding: 0;
+  background: none !important;
+  border: none !important;
+  box-shadow: none;
+  filter: drop-shadow(0 6px 12px oklch(0 0 0 / 0.28));
+}
+.sticker-art svg, .sticker-art img{ width: 100%; height: 100%; display: block; }
+.sticker-art.is-round{ border-radius: 50%; }
+.sticker-pile.static .sticker-art{ width: 64px !important; height: 64px !important; border: none; }
 
 /* ---------- Hand-drawn marks ----------
    The strokes themselves are generated in assets/js/handdrawn.js — original
