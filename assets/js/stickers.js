@@ -42,20 +42,62 @@
       if (el) pile.appendChild(el);
     });
 
+    return loadOwnStickers();
+  }
+
+  /* Your own sticker files.
+   *
+   *   assets/stickers/manifest.json
+   *   { "stickers": [
+   *       "bolt.png",                                  // simplest form
+   *       { "file": "eyes.png",   "size": 96 },        // longest side, px
+   *       { "file": "smiley.png", "shape": "circle" }  // rolls instead of slides
+   *   ]}
+   *
+   * Each image keeps its own proportions — the size is the longest side, and
+   * the other side follows the file. Images are decoded before the physics
+   * starts, so every body matches the art it carries. */
+  function loadOwnStickers() {
     return fetch('assets/stickers/manifest.json')
-      .then((r) => (r.ok ? r.json() : []))
-      .then((files) => {
-        (files || []).forEach((name) => {
-          const el = document.createElement('div');
-          el.className = 'sticker sticker-art';
-          el.dataset.shape = 'rect';
-          el.style.width = '76px';
-          el.style.height = '76px';
-          el.innerHTML = `<img src="assets/stickers/${name}" alt="" width="76" height="76">`;
-          pile.appendChild(el);
-        });
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        const list = Array.isArray(data) ? data : (data && data.stickers) || [];
+        return Promise.all(list.map(addOneOwnSticker));
       })
       .catch(() => {});
+  }
+
+  function addOneOwnSticker(entry) {
+    const spec = typeof entry === 'string' ? { file: entry } : entry || {};
+    if (!spec.file) return Promise.resolve();
+
+    const max = spec.size || 84;
+    const src = 'assets/stickers/' + spec.file;
+
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const nw = img.naturalWidth || max;
+        const nh = img.naturalHeight || max;
+        const scale = max / Math.max(nw, nh);
+        const w = Math.round(nw * scale);
+        const h = Math.round(nh * scale);
+
+        const el = document.createElement('div');
+        el.className = 'sticker sticker-art' + (spec.shape === 'circle' ? ' is-round' : '');
+        el.dataset.shape = spec.shape === 'circle' ? 'circle' : 'rect';
+        el.style.width = w + 'px';
+        el.style.height = h + 'px';
+        img.alt = '';
+        img.width = w;
+        img.height = h;
+        el.appendChild(img);
+        pile.appendChild(el);
+        resolve();
+      };
+      img.onerror = () => resolve(); // a missing file shouldn't stop the pile
+      img.src = src;
+    });
   }
 
   function start() {
