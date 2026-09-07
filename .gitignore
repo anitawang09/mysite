@@ -1,0 +1,6 @@
+# local test harness — fonts and library copies pulled down to render the
+# site in a sandbox that can't reach a CDN. Never part of the site.
+.fonttest/
+*-test.html
+og-build.html
+assets/js/*.test

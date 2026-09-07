@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://anitawang09.github.io/mysite/sitemap.xml
