@@ -5,19 +5,21 @@ One photo per job, shown inside the polaroid frame on the Experience strip.
 ## Adding one
 
 1. Drop the image in this folder.
-2. Name it in `manifest.json` under the card's key:
+2. Name it in `photos.js` under the card's key:
 
-```json
-{
-  "photos": {
-    "tbauctions": "tba-desk.jpg",
-    "atsa": { "file": "gala-night.jpg", "alt": "What the photo shows" }
-  }
-}
+```js
+window.WORK_PHOTOS = {
+  tbauctions: 'tba-desk.jpg',
+  atsa: { file: 'gala-night.jpg', alt: 'What the photo shows' },
+};
 ```
 
 Either form works. The longer one adds alt text, which is what a screen
 reader announces; without it the card falls back to the job title.
+
+It's a script rather than a JSON file the page fetches, because `fetch()`
+refuses `file://` URLs — so with JSON, opening `index.html` by
+double-clicking it showed every card on its monogram.
 
 The keys come from `data-photo` on each `<li class="polaroid">` in
 `index.html`. They are, newest first:
@@ -41,5 +43,5 @@ The keys come from `data-photo` on each `<li class="polaroid">` in
 - **Re-saved on the way in**, which drops the camera and location data
   phones write into a photo file. Worth doing to anything you add by hand.
 
-A card with no photo listed keeps its initials panel, which is a finished
+A card with no photo listed keeps its monogram panel, which is a finished
 look in its own right — so add them one at a time, in any order.

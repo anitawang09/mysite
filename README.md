@@ -25,10 +25,13 @@ Text lives in `index.html` — search for the words you want to change.
 
 Two things are data rather than markup, and each has its own README:
 
-- **Work photos** — `assets/work/manifest.json` maps a job card to an image
-  file. A job with no photo shows a tinted monogram instead.
-- **Skill stickers** — `assets/stickers/manifest.json` adds your own artwork
-  to the physics pile in the Skills section.
+- **Work photos** — `assets/work/photos.js` maps a job card to an image file.
+  A job with no photo shows a tinted monogram instead.
+- **Skill stickers** — `assets/stickers/stickers.js` adds your own artwork to
+  the physics pile in the Skills section.
+
+Both are plain scripts rather than JSON the page fetches, so everything still
+works when `index.html` is opened straight from disk.
 
 Colour is one block. `assets/css/style.css` sets a ground, a surface, an ink
 and four accents at the top of the theme layer; everything else on the page —
@@ -37,12 +40,15 @@ those seven values and the whole site follows.
 
 ## Running it locally
 
+Double-click `index.html` — the whole site works from disk, photos included.
+
+To serve it over HTTP instead (closer to how it's hosted):
+
 ```sh
 python3 -m http.server 8000
 ```
 
-then open http://localhost:8000. A plain file:// open mostly works too, but
-the manifests are fetched, so the photos and stickers need a server.
+then open http://localhost:8000.
 
 ## Third-party code
 

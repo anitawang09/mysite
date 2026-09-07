@@ -1,23 +1,25 @@
 # Sticker artwork
 
-Put your own sticker images in this folder, then list them in `manifest.json`.
+Put your own sticker images in this folder, then list them in `stickers.js`.
 They drop into the physics pile in the Skills section alongside the drawn set.
 
 ## Adding one
 
 1. Save the file here, e.g. `assets/stickers/bolt.png`
    PNG or WebP with a transparent background works best; SVG works too.
-2. Add it to `manifest.json`:
+2. Add it to `stickers.js`:
 
-```json
-{
-  "stickers": [
-    "bolt.png",
-    { "file": "eyes.png",   "size": 96 },
-    { "file": "smiley.png", "size": 80, "shape": "circle" }
-  ]
-}
+```js
+window.OWN_STICKERS = [
+  'bolt.png',
+  { file: 'eyes.png',   size: 96 },
+  { file: 'smiley.png', size: 80, shape: 'circle' },
+];
 ```
+
+It's a script rather than a JSON file the page fetches, because `fetch()`
+refuses `file://` URLs — so with JSON, none of this arrived when
+`index.html` was opened by double-clicking it.
 
 | Field   | Meaning                                                              |
 |---------|----------------------------------------------------------------------|

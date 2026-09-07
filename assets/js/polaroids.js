@@ -6,8 +6,8 @@
  * markup, so this file only adds what the browser doesn't give for free:
  * click-and-drag with a mouse, the two arrow buttons, and the progress bar.
  *
- * Photos: drop files into assets/work/ and name them in the manifest there.
- * Until a card has one, it keeps the initials panel it was built with.
+ * Photos: drop files into assets/work/ and name them in photos.js there.
+ * Until a card has one, it keeps the monogram panel it was built with.
  */
 (() => {
   'use strict';
@@ -23,39 +23,30 @@
 
   /* ---- photos ---------------------------------------------------------- */
 
-  /*   assets/work/manifest.json
-   *   { "photos": {
-   *       "tbauctions": "tba-desk.jpg",                       // simplest form
-   *       "atsa": { "file": "gala.jpg", "alt": "…" }          // with alt text
-   *   }}
-   *
-   * The key is the card's data-photo; the value names a file in assets/work/.
-   * Anything missing just keeps its initials panel — no broken images. */
-  fetch('assets/work/manifest.json')
-    .then((r) => (r.ok ? r.json() : null))
-    .then((data) => {
-      const photos = (data && data.photos) || {};
-      rail.querySelectorAll('.polaroid').forEach((card) => {
-        const entry = photos[card.dataset.photo];
-        const spec = typeof entry === 'string' ? { file: entry } : entry || {};
-        if (!spec.file) return;
-        const well = card.querySelector('.polaroid-photo');
-        const role = card.querySelector('.polaroid-role');
-        const img = new Image();
-        // described for a screen reader, or named by the job it illustrates
-        img.alt = spec.alt || (role ? role.textContent.trim() : '');
-        img.decoding = 'async';
-        // It has to be in the document for loading="lazy" to ever fire, so it
-        // goes in transparent and fades up over the initials once it decodes;
-        // a file that fails to load is removed and the initials simply stay.
-        img.loading = 'lazy';
-        img.onload = () => img.classList.add('is-loaded');
-        img.onerror = () => img.remove();
-        img.src = 'assets/work/' + spec.file;
-        well.appendChild(img);
-      });
-    })
-    .catch(() => {});
+  /* The list lives in assets/work/photos.js, loaded as a script rather than
+   * fetched — fetch() refuses file:// URLs, so a page opened straight from
+   * disk would otherwise show every card on its monogram. */
+  const photos = window.WORK_PHOTOS || {};
+  rail.querySelectorAll('.polaroid').forEach((card) => {
+    const entry = photos[card.dataset.photo];
+    const spec = typeof entry === 'string' ? { file: entry } : entry || {};
+    if (!spec.file) return;
+
+    const well = card.querySelector('.polaroid-photo');
+    const role = card.querySelector('.polaroid-role');
+    const img = new Image();
+    // described for a screen reader, or named by the job it illustrates
+    img.alt = spec.alt || (role ? role.textContent.trim() : '');
+    img.decoding = 'async';
+    // It has to be in the document for loading="lazy" to ever fire, so it
+    // goes in transparent and fades up over the monogram once it decodes;
+    // a file that fails to load is removed and the monogram simply stays.
+    img.loading = 'lazy';
+    img.onload = () => img.classList.add('is-loaded');
+    img.onerror = () => img.remove();
+    img.src = 'assets/work/' + spec.file;
+    well.appendChild(img);
+  });
 
   /* ---- drag with a mouse ----------------------------------------------- */
 

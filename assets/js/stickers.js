@@ -29,8 +29,8 @@
 
   /* Drop the drawn stickers in alongside the word tags.
      To use your own artwork instead, put files in assets/stickers/ and list
-     them in assets/stickers/manifest.json as ["eyes.svg", "bolt.png", …];
-     anything found there is added to the pile as well. */
+     them in assets/stickers/stickers.js; anything there is added to the pile
+     as well. */
   function addArtStickers() {
     if (!window.StickerArt) return;
     const set = [
@@ -45,26 +45,12 @@
     return loadOwnStickers();
   }
 
-  /* Your own sticker files.
-   *
-   *   assets/stickers/manifest.json
-   *   { "stickers": [
-   *       "bolt.png",                                  // simplest form
-   *       { "file": "eyes.png",   "size": 96 },        // longest side, px
-   *       { "file": "smiley.png", "shape": "circle" }  // rolls instead of slides
-   *   ]}
-   *
-   * Each image keeps its own proportions — the size is the longest side, and
-   * the other side follows the file. Images are decoded before the physics
-   * starts, so every body matches the art it carries. */
+  /* Your own artwork, listed in assets/stickers/stickers.js — a script rather
+   * than a fetched JSON file, so the pile also fills in when index.html is
+   * opened straight from disk. */
   function loadOwnStickers() {
-    return fetch('assets/stickers/manifest.json')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        const list = Array.isArray(data) ? data : (data && data.stickers) || [];
-        return Promise.all(list.map(addOneOwnSticker));
-      })
-      .catch(() => {});
+    const list = window.OWN_STICKERS || [];
+    return Promise.all(list.map(addOneOwnSticker));
   }
 
   function addOneOwnSticker(entry) {
