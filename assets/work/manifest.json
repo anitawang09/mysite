@@ -1,4 +1,13 @@
 {
-  "_readme": "Photos for the work-history polaroids. Put image files in this folder and name them below: the key is the card's data-photo in index.html, the value is the file. Anything left out keeps its initials panel.",
-  "photos": {}
+  "_readme": "Photos for the work-history polaroids. Put image files in this folder and name them below: the key is the card's data-photo in index.html, the value is the file (or an object with a file and its alt text). Anything left out keeps its initials panel.",
+  "photos": {
+    "atsa": {
+      "file": "atsa.jpg",
+      "alt": "Three student association members posing with a cat-shaped party balloon held overhead"
+    },
+    "akitsu": {
+      "file": "akitsu.jpg",
+      "alt": "A bowl of beef curry with rice and greens on the restaurant bar, beside a reserved sign"
+    }
+  }
 }

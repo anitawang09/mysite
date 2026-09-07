@@ -11,22 +11,25 @@ One photo per job, shown inside the polaroid frame on the Experience strip.
 {
   "photos": {
     "tbauctions": "tba-desk.jpg",
-    "atsa":       "gala-night.jpg"
+    "atsa": { "file": "gala-night.jpg", "alt": "What the photo shows" }
   }
 }
 ```
 
+Either form works. The longer one adds alt text, which is what a screen
+reader announces; without it the card falls back to the job title.
+
 The keys come from `data-photo` on each `<li class="polaroid">` in
 `index.html`. They are, newest first:
 
-| key          | job                                        |
-|--------------|--------------------------------------------|
-| `tbauctions` | HR Information Management Intern           |
-| `atsa`       | Event & Project Coordinator                |
-| `akitsu`     | Waitress                                   |
-| `pharmalinx` | Pharmacist Assistant                       |
-| `fantuan`    | Brand Promoter / Sales                     |
-| `kodis`      | Research Assistant                         |
+| key          | job                                        | photo |
+|--------------|--------------------------------------------|-------|
+| `tbauctions` | HR Information Management Intern           | |
+| `atsa`       | Event & Project Coordinator                | ✅ |
+| `akitsu`     | Waitress                                   | ✅ |
+| `pharmalinx` | Pharmacist Assistant                       | |
+| `fantuan`    | Brand Promoter / Sales                     | |
+| `kodis`      | Research Assistant                         | |
 
 ## What works best
 
@@ -35,6 +38,8 @@ The keys come from `data-photo` on each `<li class="polaroid">` in
   subject matters.
 - **About 800×800.** Larger just costs load time; smaller goes soft.
 - **JPG for photos, PNG if it has flat colour or text.**
+- **Re-saved on the way in**, which drops the camera and location data
+  phones write into a photo file. Worth doing to anything you add by hand.
 
 A card with no photo listed keeps its initials panel, which is a finished
 look in its own right — so add them one at a time, in any order.

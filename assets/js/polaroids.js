@@ -24,25 +24,35 @@
   /* ---- photos ---------------------------------------------------------- */
 
   /*   assets/work/manifest.json
-   *   { "photos": { "tbauctions": "tba-desk.jpg", "atsa": "gala.jpg" } }
+   *   { "photos": {
+   *       "tbauctions": "tba-desk.jpg",                       // simplest form
+   *       "atsa": { "file": "gala.jpg", "alt": "…" }          // with alt text
+   *   }}
    *
-   * The key is the card's data-photo; the value is a file in assets/work/.
+   * The key is the card's data-photo; the value names a file in assets/work/.
    * Anything missing just keeps its initials panel — no broken images. */
   fetch('assets/work/manifest.json')
     .then((r) => (r.ok ? r.json() : null))
     .then((data) => {
       const photos = (data && data.photos) || {};
       rail.querySelectorAll('.polaroid').forEach((card) => {
-        const file = photos[card.dataset.photo];
-        if (!file) return;
+        const entry = photos[card.dataset.photo];
+        const spec = typeof entry === 'string' ? { file: entry } : entry || {};
+        if (!spec.file) return;
         const well = card.querySelector('.polaroid-photo');
         const role = card.querySelector('.polaroid-role');
         const img = new Image();
-        img.alt = role ? role.textContent.trim() : '';
-        img.loading = 'lazy';
+        // described for a screen reader, or named by the job it illustrates
+        img.alt = spec.alt || (role ? role.textContent.trim() : '');
         img.decoding = 'async';
-        img.onload = () => well.appendChild(img);
-        img.src = 'assets/work/' + file;
+        // It has to be in the document for loading="lazy" to ever fire, so it
+        // goes in transparent and fades up over the initials once it decodes;
+        // a file that fails to load is removed and the initials simply stay.
+        img.loading = 'lazy';
+        img.onload = () => img.classList.add('is-loaded');
+        img.onerror = () => img.remove();
+        img.src = 'assets/work/' + spec.file;
+        well.appendChild(img);
       });
     })
     .catch(() => {});
