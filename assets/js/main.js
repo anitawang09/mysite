@@ -48,7 +48,6 @@
 
     updateParallax(scrollTop);
     updateGrid(scrollTop);
-    updateTimeline();
   }
 
   /* ---------- Parallax on hero background word ---------- */
@@ -79,20 +78,6 @@
 
   revealEls.forEach((el) => revealObserver.observe(el));
 
-  /* ---------- Timeline fill tied to scroll progress through section ---------- */
-  const timelineSection = document.getElementById('experience');
-  const timelineFill = document.getElementById('timelineFill');
-
-  function updateTimeline() {
-    if (!timelineSection || !timelineFill) return;
-    const rect = timelineSection.getBoundingClientRect();
-    const vh = window.innerHeight;
-    const total = rect.height + vh * 0.4;
-    const progressed = Math.min(Math.max(vh * 0.75 - rect.top, 0), total);
-    const pct = total > 0 ? (progressed / total) * 100 : 0;
-    timelineFill.style.height = pct + '%';
-  }
-
   /* ---------- Custom cursor ---------- */
   const cursorDot = document.getElementById('cursorDot');
   const cursorRing = document.getElementById('cursorRing');
@@ -121,48 +106,6 @@
     document.querySelectorAll('.magnetic').forEach((el) => {
       el.addEventListener('mouseenter', () => cursorRing.classList.add('active'));
       el.addEventListener('mouseleave', () => cursorRing.classList.remove('active'));
-    });
-  }
-
-  /* ---------- Palette chooser ----------
-     Temporary, for picking a palette. Remove this block, #paletteBar, and
-     the .palette-bar styles once one is chosen. */
-  const paletteBar = document.getElementById('paletteBar');
-  if (paletteBar) {
-    // ground + accent of each palette, mirroring the light tokens in style.css
-    const palettes = ['ink', 'butter', 'periwinkle', 'sage', 'apricot', 'blush'];
-    const preview = {
-      ink:        ['oklch(0.305 0.055 258)', 'oklch(0.825 0.14 80)'],
-      butter:     ['oklch(0.945 0.055 92)',  'oklch(0.575 0.19 28)'],
-      periwinkle: ['oklch(0.925 0.048 268)', 'oklch(0.635 0.18 32)'],
-      sage:       ['oklch(0.925 0.042 148)', 'oklch(0.585 0.16 42)'],
-      apricot:    ['oklch(0.915 0.062 62)',  'oklch(0.455 0.14 258)'],
-      blush:      ['oklch(0.928 0.045 18)',  'oklch(0.575 0.185 15)'],
-    };
-    let active = 'ink';
-    try {
-      active = localStorage.getItem('palette') || 'ink';
-    } catch (e) { /* private mode */ }
-    if (!palettes.includes(active)) active = 'ink';
-    document.documentElement.dataset.palette = active;
-
-    const swatches = palettes.map((name) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'palette-swatch';
-      b.title = name;
-      b.setAttribute('aria-label', name);
-      b.setAttribute('aria-pressed', String(name === active));
-      const [ground, accent] = preview[name];
-      b.style.background = `linear-gradient(135deg, ${ground} 55%, ${accent} 55%)`;
-
-      b.addEventListener('click', () => {
-        document.documentElement.dataset.palette = name;
-        try { localStorage.setItem('palette', name); } catch (e) { /* ignore */ }
-        swatches.forEach((s) => s.setAttribute('aria-pressed', String(s === b)));
-      });
-      paletteBar.appendChild(b);
-      return b;
     });
   }
 

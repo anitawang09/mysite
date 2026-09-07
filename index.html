@@ -251,45 +251,86 @@
       <p class="eyebrow reveal">Experience</p>
     </div>
     <h2 class="section-title reveal">Where I've worked.</h2>
+    <p class="section-lede reveal">Six jobs, newest first. Drag the strip sideways, or use the arrows.</p>
 
-    <div class="timeline">
-      <div class="timeline-line"><i id="timelineFill"></i></div>
-
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2026 — Present</span>
-        <h3>HR Information Management Intern</h3>
-        <p>TBAuctions — I set up onboarding and offboarding checklists for the Dutch, Swedish and Danish offices, and build reports on staff numbers, turnover and review completion.</p>
+    <div class="rail reveal" data-delay="1">
+      <div class="rail-head">
+        <div class="note-row">
+          <p class="hand-note">drag sideways</p>
+          <span class="note-arrow" data-hand="arrow" aria-hidden="true"></span>
+        </div>
+        <div class="rail-nav">
+          <button type="button" class="rail-btn" data-dir="-1" aria-label="Previous job">&#8592;</button>
+          <button type="button" class="rail-btn" data-dir="1" aria-label="Next job">&#8594;</button>
+        </div>
       </div>
 
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2025 — Present</span>
-        <h3>Event &amp; Project Coordinator</h3>
-        <p>Amsterdam Taiwanese Student Association — I plan student events from first idea to final night, and keep members, partners and suppliers in the loop, mostly in Mandarin.</p>
-      </div>
+      <ul class="rail-track no-scrollbar" id="workRail" tabindex="0"
+          data-lenis-prevent-horizontal
+          aria-label="Work history, scrolls sideways">
+        <li class="polaroid" data-photo="tbauctions" style="--tilt: -1.6deg">
+          <div class="polaroid-photo" data-initials="TB"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">first day at TBA</p>
+            <p class="polaroid-date">2026 — Present · Amsterdam</p>
+            <h3 class="polaroid-role">HR Information Management Intern</h3>
+            <p class="polaroid-org">TBAuctions</p>
+            <p class="polaroid-note">I set up onboarding and offboarding checklists for the Dutch, Swedish and Danish offices, and build reports on staff numbers, turnover and review completion.</p>
+          </div>
+        </li>
+        <li class="polaroid" data-photo="atsa" style="--tilt: 1.2deg">
+          <div class="polaroid-photo" data-initials="AT"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">the night it all worked</p>
+            <p class="polaroid-date">2025 — Present · Amsterdam</p>
+            <h3 class="polaroid-role">Event &amp; Project Coordinator</h3>
+            <p class="polaroid-org">Amsterdam Taiwanese Student Association</p>
+            <p class="polaroid-note">I plan student events from first idea to final night, and keep members, partners and suppliers in the loop, mostly in Mandarin.</p>
+          </div>
+        </li>
+        <li class="polaroid" data-photo="akitsu" style="--tilt: -0.9deg">
+          <div class="polaroid-photo" data-initials="AA"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">table six, again</p>
+            <p class="polaroid-date">2025 — Present · Amsterdam</p>
+            <h3 class="polaroid-role">Waitress</h3>
+            <p class="polaroid-org">Akitsu Amsterdam</p>
+            <p class="polaroid-note">A busy restaurant floor, international guests, and a lot of teamwork under time pressure.</p>
+          </div>
+        </li>
+        <li class="polaroid" data-photo="pharmalinx" style="--tilt: 1.7deg">
+          <div class="polaroid-photo" data-initials="PM"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">counting twice</p>
+            <p class="polaroid-date">2023 — 2024 · Toronto</p>
+            <h3 class="polaroid-role">Pharmacist Assistant</h3>
+            <p class="polaroid-org">Pharmalinx Medical Centre &amp; Pharmacy</p>
+            <p class="polaroid-note">Paperwork and customer questions in a setting where accuracy and privacy rules really matter.</p>
+          </div>
+        </li>
+        <li class="polaroid" data-photo="fantuan" style="--tilt: -1.3deg">
+          <div class="polaroid-photo" data-initials="FD"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">campus stand</p>
+            <p class="polaroid-date">2023 — 2024 · Toronto</p>
+            <h3 class="polaroid-role">Brand Promoter / Sales</h3>
+            <p class="polaroid-org">Fantuan Delivery App</p>
+            <p class="polaroid-note">I promoted the app to Chinese-speaking customers on campus and signed up new users.</p>
+          </div>
+        </li>
+        <li class="polaroid" data-photo="kodis" style="--tilt: 0.8deg">
+          <div class="polaroid-photo" data-initials="KP"></div>
+          <div class="polaroid-body">
+            <p class="polaroid-caption">my first dataset</p>
+            <p class="polaroid-date">2017 · Online</p>
+            <h3 class="polaroid-role">Research Assistant</h3>
+            <p class="polaroid-org">Kodis Paw-a-thon</p>
+            <p class="polaroid-note">Collected and organised the data, then wrote up the results.</p>
+          </div>
+        </li>
+      </ul>
 
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2025 — Present</span>
-        <h3>Waitress</h3>
-        <p>Akitsu Amsterdam — busy restaurant floor, international guests, lots of teamwork under time pressure.</p>
-      </div>
-
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2023 — 2024</span>
-        <h3>Pharmacist Assistant</h3>
-        <p>Pharmalinx Medical Centre &amp; Pharmacy — handled paperwork and customer questions in a setting where accuracy and privacy rules really matter.</p>
-      </div>
-
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2023 — 2024</span>
-        <h3>Brand Promoter / Sales</h3>
-        <p>Fantuan Delivery App — promoted the app to Chinese-speaking customers on campus and signed up new users.</p>
-      </div>
-
-      <div class="timeline-item reveal">
-        <span class="timeline-date">2017 — 2017</span>
-        <h3>Research Assistant</h3>
-        <p>Kodis Paw-a-thon (online) — collected and organised data, and wrote up the results.</p>
-      </div>
+      <div class="rail-progress" aria-hidden="true"><i></i></div>
     </div>
   </section>
 
@@ -317,9 +358,6 @@
 
 </div><!-- /.page -->
 
-<div class="palette-bar" id="paletteBar" role="group" aria-label="Color palette">
-  <span>Palette</span>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
@@ -327,7 +365,8 @@
 <script src="assets/js/handdrawn.js"></script>
 <script src="assets/js/stickerart.js"></script>
 <script src="assets/js/stickers.js"></script>
-    <script src="assets/js/puzzle.js"></script>
+<script src="assets/js/puzzle.js"></script>
+<script src="assets/js/polaroids.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

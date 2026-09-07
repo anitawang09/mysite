@@ -8,10 +8,9 @@
 
    Two ideas here are borrowed as technique, then implemented from scratch:
 
-   1. A label ladder. One ink color per palette, stepped down in alpha for
-      hierarchy (full / 60% / 32% / 18%) plus a hairline at 12%, rather than
-      picking separate greys. Derived with color-mix, so all six palettes get
-      the whole ladder from a single value.
+   1. A label ladder. One ink colour, stepped down in alpha for hierarchy
+      rather than picking a separate grey for each level. Derived with
+      color-mix, so the whole ladder follows from a single value.
    2. Elevation as two grounds — a deep page ground and a raised surface —
       instead of borders doing all the separating.
 
@@ -99,181 +98,50 @@
     /* the signature curve: leaves fast, lands almost flat */
     --ease-signature: cubic-bezier(0.62, 0, 0.05, 1);
 
-    /* ---- palette: ink (default) ----
-       A palette only sets a ground, a raised surface, an ink and four
-       accents. Everything else is derived below. */
-    --bg: oklch(0.305 0.055 258);
-    --surface: oklch(0.355 0.05 258);
-    --ink: oklch(0.955 0.018 92);
-    --red: oklch(0.70 0.175 30);
-    --gold: oklch(0.825 0.14 80);
-    --green: oklch(0.745 0.12 160);
-    --blue: oklch(0.755 0.125 236);
+    /* ---- palette ----
+       Periwinkle: one ground, one raised surface, one ink, four accents.
+       Every other colour in this sheet is derived from these seven values,
+       so this block is the only place a colour is chosen. */
+    --bg: oklch(0.925 0.048 268);
+    --surface: oklch(0.975 0.020 268);
+    --ink: oklch(0.255 0.010 268);   /* grey-black, a trace of the ground in it */
+    --red: oklch(0.585 0.185 30);
+    --gold: oklch(0.640 0.150 74);
+    --green: oklch(0.545 0.125 158);
+    --blue: oklch(0.485 0.150 262);
 
-    /* sticker stock stays constant across palettes, like real vinyl */
+    /* sticker stock stays constant, like real vinyl */
     --sticker-paper: oklch(0.96 0.012 92);
     --ink-deep: oklch(0.22 0.03 258);
     --pink: oklch(0.78 0.13 355);
   }
 
   /* ---- the ladder ----
-     One ink, stepped in alpha. Declared once; every palette inherits it. */
+     One ink, stepped in alpha. Every step that carries words clears WCAG AA
+     against the ground; the faint end is for rules and decoration only. */
   :root {
-    --label-1: var(--ink);
-    --label-2: color-mix(in oklab, var(--ink) 60%, transparent);
-    --label-3: color-mix(in oklab, var(--ink) 32%, transparent);
-    --label-4: color-mix(in oklab, var(--ink) 18%, transparent);
-    --line: color-mix(in oklab, var(--ink) 12%, transparent);
-    --line-strong: color-mix(in oklab, var(--ink) 40%, transparent);
-    --grid-line: color-mix(in oklab, var(--ink) 7%, transparent);
-    --grid-row: color-mix(in oklab, var(--ink) 4%, transparent);
+    --label-1: var(--ink);                                        /* 12.5:1 */
+    --label-2: color-mix(in oklab, var(--ink) 76%, transparent);  /*  6.4:1 */
+    --label-3: color-mix(in oklab, var(--ink) 66%, transparent);  /*  4.7:1 */
+    --label-4: color-mix(in oklab, var(--ink) 42%, transparent);  /* decoration */
+    --line: color-mix(in oklab, var(--ink) 16%, transparent);
+    --line-strong: color-mix(in oklab, var(--ink) 44%, transparent);
+    --grid-line: color-mix(in oklab, var(--ink) 10%, transparent);
+    --grid-row: color-mix(in oklab, var(--ink) 6%, transparent);
 
     --ink-soft: var(--label-2);
 
-  /* hero puzzle — faint enough to stay behind the words */
-  --puzzle-line:  color-mix(in oklab, var(--ink) 18%, transparent);
-  --puzzle-fill:  color-mix(in oklab, var(--ink) 5%, transparent);
-  --puzzle-red:   color-mix(in oklab, var(--red) 13%, transparent);
-  --puzzle-gold:  color-mix(in oklab, var(--gold) 15%, transparent);
-  --puzzle-blue:  color-mix(in oklab, var(--blue) 13%, transparent);
-  --puzzle-green: color-mix(in oklab, var(--green) 13%, transparent);
+    /* hero puzzle — faint enough to stay behind the words */
+    --puzzle-line:  color-mix(in oklab, var(--ink) 18%, transparent);
+    --puzzle-fill:  color-mix(in oklab, var(--ink) 5%, transparent);
+    --puzzle-red:   color-mix(in oklab, var(--red) 13%, transparent);
+    --puzzle-gold:  color-mix(in oklab, var(--gold) 15%, transparent);
+    --puzzle-blue:  color-mix(in oklab, var(--blue) 13%, transparent);
+    --puzzle-green: color-mix(in oklab, var(--green) 13%, transparent);
+
     --accent: var(--red);
     --selection-bg: var(--gold);
-    --selection-fg: var(--ink-deep);
-  }
-
-  /* ---- the other palettes ----
-     Switch with data-palette on <html>:
-     ink | butter | periwinkle | sage | apricot | blush */
-  :root[data-palette="butter"] {
-    --bg: oklch(0.945 0.055 92);
-    --surface: oklch(0.985 0.022 92);
-    --ink: oklch(0.25 0.035 62);
-    --red: oklch(0.575 0.19 28);
-    --gold: oklch(0.70 0.15 68);
-    --green: oklch(0.55 0.12 165);
-    --blue: oklch(0.52 0.14 245);
     --selection-fg: oklch(0.98 0.01 92);
-  }
-  :root[data-palette="periwinkle"] {
-    --bg: oklch(0.925 0.048 268);
-    --surface: oklch(0.975 0.02 268);
-    --ink: oklch(0.245 0.045 275);
-    --red: oklch(0.635 0.18 32);
-    --gold: oklch(0.76 0.14 78);
-    --green: oklch(0.585 0.13 152);
-    --blue: oklch(0.51 0.15 258);
-  }
-  :root[data-palette="sage"] {
-    --bg: oklch(0.925 0.042 148);
-    --surface: oklch(0.975 0.018 148);
-    --ink: oklch(0.25 0.035 162);
-    --red: oklch(0.585 0.16 42);
-    --gold: oklch(0.735 0.14 88);
-    --green: oklch(0.52 0.11 195);
-    --blue: oklch(0.50 0.14 340);
-  }
-  :root[data-palette="apricot"] {
-    --bg: oklch(0.915 0.062 62);
-    --surface: oklch(0.972 0.026 62);
-    --ink: oklch(0.265 0.05 262);
-    --red: oklch(0.585 0.19 22);
-    --gold: oklch(0.74 0.145 82);
-    --green: oklch(0.565 0.12 132);
-    --blue: oklch(0.455 0.14 258);
-  }
-  :root[data-palette="blush"] {
-    --bg: oklch(0.928 0.045 18);
-    --surface: oklch(0.975 0.018 18);
-    --ink: oklch(0.255 0.04 158);
-    --red: oklch(0.575 0.185 15);
-    --gold: oklch(0.745 0.14 74);
-    --green: oklch(0.50 0.11 158);
-    --blue: oklch(0.51 0.14 252);
-  }
-
-  /* ---- dark ----
-     Only the ground, ink and accent brightness change; the ladder follows. */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: oklch(0.225 0.05 258);
-      --surface: oklch(0.275 0.045 258);
-      --ink: oklch(0.955 0.018 92);
-      --red: oklch(0.71 0.175 30);
-      --gold: oklch(0.83 0.14 80);
-      --green: oklch(0.75 0.12 160);
-      --blue: oklch(0.76 0.125 236);
-      --selection-fg: var(--ink-deep);
-    }
-    :root:not([data-theme="light"])[data-palette="butter"] {
-      --bg: oklch(0.225 0.03 78);  --surface: oklch(0.275 0.03 78);
-      --ink: oklch(0.95 0.025 92);
-      --red: oklch(0.70 0.18 30);  --gold: oklch(0.82 0.14 78);
-      --green: oklch(0.72 0.12 165); --blue: oklch(0.70 0.13 245);
-    }
-    :root:not([data-theme="light"])[data-palette="periwinkle"] {
-      --bg: oklch(0.215 0.038 270); --surface: oklch(0.265 0.038 270);
-      --ink: oklch(0.95 0.015 268);
-      --red: oklch(0.72 0.17 32);  --gold: oklch(0.83 0.13 78);
-      --green: oklch(0.73 0.13 152); --blue: oklch(0.72 0.13 258);
-    }
-    :root:not([data-theme="light"])[data-palette="sage"] {
-      --bg: oklch(0.215 0.03 158); --surface: oklch(0.265 0.03 158);
-      --ink: oklch(0.95 0.02 140);
-      --red: oklch(0.71 0.15 42);  --gold: oklch(0.82 0.13 88);
-      --green: oklch(0.72 0.11 195); --blue: oklch(0.70 0.13 340);
-    }
-    :root:not([data-theme="light"])[data-palette="apricot"] {
-      --bg: oklch(0.215 0.035 265); --surface: oklch(0.265 0.035 265);
-      --ink: oklch(0.95 0.03 70);
-      --red: oklch(0.71 0.18 22);  --gold: oklch(0.83 0.14 82);
-      --green: oklch(0.72 0.12 132); --blue: oklch(0.70 0.13 258);
-    }
-    :root:not([data-theme="light"])[data-palette="blush"] {
-      --bg: oklch(0.215 0.032 12); --surface: oklch(0.265 0.032 12);
-      --ink: oklch(0.95 0.02 20);
-      --red: oklch(0.72 0.17 15);  --gold: oklch(0.83 0.13 74);
-      --green: oklch(0.72 0.11 158); --blue: oklch(0.71 0.13 252);
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: oklch(0.225 0.05 258);
-    --surface: oklch(0.275 0.045 258);
-    --ink: oklch(0.955 0.018 92);
-    --red: oklch(0.71 0.175 30);
-    --gold: oklch(0.83 0.14 80);
-    --green: oklch(0.75 0.12 160);
-    --blue: oklch(0.76 0.125 236);
-  }
-  :root[data-theme="dark"][data-palette="butter"] {
-    --bg: oklch(0.225 0.03 78); --surface: oklch(0.275 0.03 78);
-    --ink: oklch(0.95 0.025 92);
-    --red: oklch(0.70 0.18 30); --gold: oklch(0.82 0.14 78);
-    --green: oklch(0.72 0.12 165); --blue: oklch(0.70 0.13 245);
-  }
-  :root[data-theme="dark"][data-palette="periwinkle"] {
-    --bg: oklch(0.215 0.038 270); --surface: oklch(0.265 0.038 270);
-    --ink: oklch(0.95 0.015 268);
-    --red: oklch(0.72 0.17 32); --gold: oklch(0.83 0.13 78);
-    --green: oklch(0.73 0.13 152); --blue: oklch(0.72 0.13 258);
-  }
-  :root[data-theme="dark"][data-palette="sage"] {
-    --bg: oklch(0.215 0.03 158); --surface: oklch(0.265 0.03 158);
-    --ink: oklch(0.95 0.02 140);
-    --red: oklch(0.71 0.15 42); --gold: oklch(0.82 0.13 88);
-    --green: oklch(0.72 0.11 195); --blue: oklch(0.70 0.13 340);
-  }
-  :root[data-theme="dark"][data-palette="apricot"] {
-    --bg: oklch(0.215 0.035 265); --surface: oklch(0.265 0.035 265);
-    --ink: oklch(0.95 0.03 70);
-    --red: oklch(0.71 0.18 22); --gold: oklch(0.83 0.14 82);
-    --green: oklch(0.72 0.12 132); --blue: oklch(0.70 0.13 258);
-  }
-  :root[data-theme="dark"][data-palette="blush"] {
-    --bg: oklch(0.215 0.032 12); --surface: oklch(0.265 0.032 12);
-    --ink: oklch(0.95 0.02 20);
-    --red: oklch(0.72 0.17 15); --gold: oklch(0.83 0.13 74);
-    --green: oklch(0.72 0.11 158); --blue: oklch(0.71 0.13 252);
   }
 }
 
@@ -636,6 +504,13 @@
     text-wrap: balance;
     margin-bottom: var(--space-12);
   }
+  /* a section title followed by a lede loses the big gap under the title */
+  .section-title:has(+ .section-lede) { margin-bottom: var(--space-4); }
+  .section-lede {
+    max-width: 620px;
+    font-size: var(--text-lg);
+    color: var(--label-2);
+  }
 
   /* ---------- about ---------- */
   .about-grid { display: grid; gap: var(--space-12); }
@@ -669,12 +544,6 @@
   .fact-value { font-weight: var(--weight-medium); }
   @media (max-width: 40rem) { .fact-grid { grid-template-columns: 1fr; } }
 
-  /* ---------- sticker pile ---------- */
-  .sticker-hint {
-    font-family: var(--font-mono); font-size: var(--text-xs);
-    color: var(--label-2);
-    transform: rotate(-0.6deg);
-  }
   .note-row {
     display: flex; align-items: flex-end; gap: var(--space-3);
     margin-bottom: var(--space-2);
@@ -836,34 +705,157 @@
     .project { grid-template-columns: 1fr; gap: var(--space-3); }
   }
 
-  /* ---------- timeline ---------- */
-  .timeline { position: relative; padding-left: var(--space-10); }
-  .timeline-line {
-    position: absolute; left: 0; top: 6px; bottom: 6px;
-    width: 2px; overflow: hidden; background: var(--line);
+  /* ---------- work history: a strip of polaroids ----------
+     The strip scrolls sideways on its own; the page keeps scrolling down
+     past it. data-lenis-prevent-horizontal in the markup hands sideways
+     gestures to the browser and leaves vertical ones to the smooth scroll,
+     so a downward swipe over the strip still moves the page.
+
+     Nothing here shrinks to fit: the card is a fixed, readable width and
+     the type inside it is the same size as body copy elsewhere. */
+  .rail { margin-top: var(--space-10); }
+
+  .rail-head {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: var(--space-6);
+    margin-bottom: var(--space-5);
+    min-height: 44px;
   }
-  .timeline-line i {
-    position: absolute; top: 0; left: 0;
-    display: block; width: 100%; height: 0;
-    background: var(--red);
-  }
-  .timeline-item { position: relative; padding-bottom: 44px; }
-  .timeline-item::before {
-    content: ""; position: absolute; left: -45px; top: 6px;
-    width: 10px; height: 10px;
+  .rail-nav { display: flex; gap: var(--space-2); flex-shrink: 0; }
+  .rail-btn {
+    width: 42px; height: 42px;
+    display: grid; place-items: center;
+    font-size: var(--text-lg);
+    color: var(--label-1);
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius-round);
-    background: var(--bg); border: 2px solid var(--red);
+    background: var(--surface);
+    cursor: pointer;
+    transition: transform .2s var(--ease-out), background-color .2s var(--ease-out),
+                opacity .2s var(--ease-out);
   }
-  .timeline-date {
+  .rail-btn:hover { transform: translateY(-2px); background: var(--bg); }
+  .rail-btn[disabled] { opacity: .3; cursor: default; transform: none; }
+
+  .rail-track {
+    display: flex; gap: var(--space-8);
+    /* full-bleed: the strip runs to both screen edges, the page gutter
+       becomes scroll padding so the first card still lines up with the text */
+    margin-inline: calc(var(--edge) * -1);
+    padding: var(--space-4) var(--edge) var(--space-10);
+    overflow-x: auto; overflow-y: hidden;
+    scroll-padding-inline: var(--edge);
+    overscroll-behavior-x: contain;
+    list-style: none;
+    cursor: grab;
+  }
+  .rail-track.is-dragging { cursor: grabbing; }
+  .rail-track.is-dragging * { pointer-events: none; }
+  .rail-track:focus-visible { outline: 2px solid var(--label-1); outline-offset: 4px; }
+
+  .polaroid {
+    flex: 0 0 auto;
+    width: clamp(15.5rem, 78vw, 20rem);
+    padding: 14px 14px 20px;
+    background: var(--sticker-paper);
+    border-radius: 3px;
+    box-shadow:
+      0 1px 2px oklch(0 0 0 / .10),
+      0 12px 28px oklch(0 0 0 / .13);
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform .4s var(--ease-soft), box-shadow .4s var(--ease-soft);
+  }
+  .rail-track:not(.is-dragging) .polaroid:hover {
+    transform: rotate(0deg) translateY(-6px);
+    box-shadow:
+      0 2px 4px oklch(0 0 0 / .10),
+      0 20px 40px oklch(0 0 0 / .17);
+  }
+
+  /* the photo well. An image drops in here when one exists; until then the
+     initials sit on a tinted ground so the card still reads as finished. */
+  .polaroid-photo {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    display: grid; place-items: center;
+    overflow: hidden;
+    background: var(--ink-deep);
+    background-image: linear-gradient(var(--photo-angle, 150deg),
+      color-mix(in oklab, var(--photo-a, var(--blue)) 58%, var(--ink-deep)),
+      color-mix(in oklab, var(--photo-b, var(--red)) 40%, var(--ink-deep)));
+  }
+  /* each well gets its own light, so six placeholders don't read as one */
+  .polaroid:nth-child(1) { --photo-a: var(--blue);  --photo-b: var(--red);   --photo-angle: 152deg; }
+  .polaroid:nth-child(2) { --photo-a: var(--gold);  --photo-b: var(--red);   --photo-angle: 200deg; }
+  .polaroid:nth-child(3) { --photo-a: var(--green); --photo-b: var(--blue);  --photo-angle: 128deg; }
+  .polaroid:nth-child(4) { --photo-a: var(--blue);  --photo-b: var(--green); --photo-angle: 172deg; }
+  .polaroid:nth-child(5) { --photo-a: var(--red);   --photo-b: var(--gold);  --photo-angle: 144deg; }
+  .polaroid:nth-child(6) { --photo-a: var(--gold);  --photo-b: var(--green); --photo-angle: 190deg; }
+  .polaroid-photo::after {
+    content: attr(data-initials);
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    letter-spacing: var(--tracking-tight);
+    color: color-mix(in oklab, var(--sticker-paper) 72%, transparent);
+  }
+  .polaroid-photo img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .polaroid-photo:has(img)::after { content: none; }
+
+  .polaroid-body { padding-top: var(--space-4); }
+
+  .polaroid-caption {
+    font-family: var(--font-hand);
+    font-size: var(--text-xl);
+    line-height: 1.15;
+    color: var(--ink-deep);
+    transform: rotate(-0.8deg);
+  }
+  .polaroid-date {
+    margin-top: var(--space-2);
     font-family: var(--font-mono); font-size: var(--text-xs);
     letter-spacing: var(--tracking-wide);
-    color: var(--label-2);
+    color: color-mix(in oklab, var(--ink-deep) 62%, transparent);
   }
-  .timeline-item h3 {
-    font-family: var(--font-display); font-size: var(--text-xl);
-    margin: var(--space-2) 0 var(--space);
+  .polaroid-role {
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: var(--leading-snug);
+    color: var(--ink-deep);
   }
-  .timeline-item p { max-width: 620px; color: var(--label-2); }
+  .polaroid-org {
+    margin-top: 2px;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
+    color: color-mix(in oklab, var(--ink-deep) 70%, transparent);
+  }
+  .polaroid-note {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: color-mix(in oklab, var(--ink-deep) 78%, transparent);
+  }
+
+  .rail-progress {
+    height: 2px;
+    background: var(--line);
+    max-width: 220px;
+  }
+  .rail-progress i {
+    display: block; height: 100%; width: 0;
+    background: var(--red);
+    transition: width .18s linear;
+  }
+
+  @media (max-width: 40rem) {
+    .rail-head { align-items: center; }
+    .polaroid { padding: 11px 11px 16px; }
+  }
 
   /* ---------- contact ---------- */
   .contact { text-align: center; }
@@ -932,41 +924,6 @@
     opacity: .8;
   }
 
-  /* ---------- palette chooser ----------
-     Temporary. Remove this block, #paletteBar in index.html, and the palette
-     section of main.js once a palette is settled on. */
-  .palette-bar {
-    position: fixed; right: 18px; bottom: 18px; z-index: 900;
-    display: flex; align-items: center; gap: var(--space-2);
-    padding: 9px 12px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-round);
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 6px 22px oklch(0 0 0 / 0.10);
-  }
-  .palette-bar span {
-    font-family: var(--font-mono); font-size: var(--text-xs);
-    letter-spacing: var(--tracking-wide);
-    text-transform: uppercase;
-    color: var(--label-2);
-  }
-  .palette-swatch {
-    width: 22px; height: 22px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-round);
-    cursor: pointer;
-    appearance: none; -webkit-appearance: none;
-    transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out);
-  }
-  .palette-swatch:hover { transform: scale(1.12); }
-  .palette-swatch[aria-pressed="true"] {
-    box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--label-1);
-  }
-  @media (max-width: 40rem) {
-    .palette-bar { right: 12px; bottom: 12px; padding: 7px 10px; }
-    .palette-bar span { display: none; }
-  }
 }
 
 /* =========================================================================
@@ -1002,26 +959,11 @@
   /* terminal-style caret */
   .blink { animation: blink 1s step-end infinite; }
 
-  .spin-slow {
-    display: inline-block;
-    transform-box: fill-box; transform-origin: 50%;
-    will-change: transform;
-    animation: spin 12s linear infinite;
-  }
 
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-scrollbar::-webkit-scrollbar { width: 0; height: 0; display: none; }
 
-  .sr-only {
-    position: absolute; width: 1px; height: 1px;
-    margin: -1px; padding: 0;
-    clip-path: inset(50%);
-    white-space: nowrap; overflow: hidden;
-  }
 
-  .tabular { font-variant-numeric: tabular-nums; }
-  .balance { text-wrap: balance; }
-  .nowrap { white-space: nowrap; }
 }
 
 /* =========================================================================
@@ -1031,7 +973,6 @@
 @keyframes scroll-cue { 0% { top: -100%; } 50% { top: 0; } 100% { top: 100%; } }
 @keyframes hd-draw   { to { stroke-dashoffset: 0; } }
 @keyframes blink     { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
-@keyframes spin      { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto !important; }
@@ -1039,5 +980,5 @@
   .scroll-line i { animation: none; top: 0; }
   .reveal { transition: none; opacity: 1; transform: none; }
   .cursor-dot, .cursor-ring { display: none; }
-  .blink, .spin-slow { animation: none; }
+  .blink { animation: none; }
 }

@@ -1,0 +1,4 @@
+{
+  "_readme": "Photos for the work-history polaroids. Put image files in this folder and name them below: the key is the card's data-photo in index.html, the value is the file. Anything left out keeps its initials panel.",
+  "photos": {}
+}
