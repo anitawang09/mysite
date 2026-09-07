@@ -27,8 +27,8 @@ The keys come from `data-photo` on each `<li class="polaroid">` in
 | `tbauctions` | HR Information Management Intern           | |
 | `atsa`       | Event & Project Coordinator                | ✅ |
 | `akitsu`     | Waitress                                   | ✅ |
-| `pharmalinx` | Pharmacist Assistant                       | |
-| `fantuan`    | Brand Promoter / Sales                     | |
+| `pharmalinx` | Pharmacist Assistant                       | ✅ |
+| `fantuan`    | Brand Promoter / Sales                     | ✅ |
 | `kodis`      | Research Assistant                         | |
 
 ## What works best
