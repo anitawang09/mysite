@@ -1,7 +1,12 @@
 # anitawang09.github.io/mysite
 
 My portfolio — a single static page, no build step. The repository is the
-site: push to `main` and GitHub Pages publishes it.
+site: GitHub Pages serves `main` directly, so pushing publishes it.
+
+There is no Actions workflow. Pages is set to **Deploy from a branch**
+(`main`, `/root`) under Settings → Pages, which needs nothing to run and no
+build minutes. The `.nojekyll` file tells Pages to serve the files as they
+are rather than passing them through Jekyll.
 
 **Live:** https://anitawang09.github.io/mysite/
 
