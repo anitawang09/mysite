@@ -22,6 +22,10 @@ window.WORK_PHOTOS = {
     file: 'pharmalinx.jpg',
     alt: 'Gloved hands compounding medication with a mortar and pestle at a pharmacy bench, stock shelves behind',
   },
+  kodis: {
+    file: 'kodis.jpg',
+    alt: "Kodi's Pawathon logo: a chocolate labrador inside a ring of paw prints, captioned Fun Run for Humans and Dogs, Supporting Cancer Research",
+  },
   fantuan: {
     file: 'fantuan.jpg',
     alt: 'A campus event refreshment table: coffee urns, cream carafes, stacked cups and trays of iced cupcakes',

@@ -268,12 +268,12 @@
       <p class="eyebrow reveal">Experience</p>
     </div>
     <h2 class="section-title reveal">Where I've worked.</h2>
-    <p class="section-lede reveal">Six jobs, newest first. Drag sideways, or use the arrows.</p>
+    <p class="section-lede reveal">Six jobs, newest first. Spin the ring, or use the arrows.</p>
 
     <div class="rail reveal" data-delay="1">
       <div class="rail-head">
         <div class="note-row">
-          <p class="hand-note">drag sideways</p>
+          <p class="hand-note">spin it</p>
           <span class="note-arrow" data-hand="arrow" aria-hidden="true"></span>
         </div>
         <div class="rail-nav">
@@ -282,10 +282,14 @@
         </div>
       </div>
 
-      <ul class="rail-track no-scrollbar" id="workRail" tabindex="0"
-          data-lenis-prevent-horizontal
-          aria-label="Work history, scrolls sideways">
-        <li class="polaroid" data-photo="tbauctions" style="--tilt: -1.6deg">
+      <div class="ring" id="workRing" tabindex="0"
+           data-lenis-prevent-horizontal
+           role="group" aria-roledescription="carousel"
+           aria-label="Work history. Drag to spin, or use the arrow keys.">
+        <div class="ring-stage">
+          <div class="ring-camera">
+            <ul class="ring-track">
+        <li class="polaroid" data-photo="tbauctions">
           <div class="polaroid-photo" data-initials="TB"></div>
           <div class="polaroid-body">
             <p class="polaroid-caption">first day at TBA</p>
@@ -295,7 +299,7 @@
             <p class="polaroid-note">Cross-cultural coordination between the Dutch head office and the Swedish and Danish teams. I build the onboarding, probation and offboarding task lists each region needs, pull reports and dashboards on headcount, turnover, diversity and performance-review completion, and support the platform itself.</p>
           </div>
         </li>
-        <li class="polaroid" data-photo="akitsu" style="--tilt: 1.2deg">
+        <li class="polaroid" data-photo="akitsu">
           <div class="polaroid-photo" data-initials="AA"></div>
           <div class="polaroid-body">
             <p class="polaroid-caption">table six, again</p>
@@ -305,7 +309,7 @@
             <p class="polaroid-note">Customer service on a fast-paced, high-volume floor, supporting team coordination and daily operations. I look after an international clientele, building rapport and resolving requests as they come.</p>
           </div>
         </li>
-        <li class="polaroid" data-photo="atsa" style="--tilt: -0.9deg">
+        <li class="polaroid" data-photo="atsa">
           <div class="polaroid-photo" data-initials="AT"></div>
           <div class="polaroid-body">
             <p class="polaroid-caption">the night it all worked</p>
@@ -315,7 +319,7 @@
             <p class="polaroid-note">I plan and coordinate student-led events end to end, managing timelines, teams and logistics from concept to delivery, and liaise with members, partners and vendors — largely in Mandarin Chinese.</p>
           </div>
         </li>
-        <li class="polaroid" data-photo="pharmalinx" style="--tilt: 1.7deg">
+        <li class="polaroid" data-photo="pharmalinx">
           <div class="polaroid-photo" data-initials="PM"></div>
           <div class="polaroid-body">
             <p class="polaroid-caption">counting twice</p>
@@ -325,7 +329,7 @@
             <p class="polaroid-note">Administrative processes and document preparation held to strict accuracy and regulatory compliance, alongside customer communication and enquiries.</p>
           </div>
         </li>
-        <li class="polaroid" data-photo="fantuan" style="--tilt: -1.3deg">
+        <li class="polaroid" data-photo="fantuan">
           <div class="polaroid-photo" data-initials="FD"></div>
           <div class="polaroid-body">
             <p class="polaroid-caption">campus event</p>
@@ -335,17 +339,21 @@
             <p class="polaroid-note">I drove brand awareness and customer acquisition through direct engagement and targeted outreach, representing the brand to Chinese-speaking customers and gathering market feedback.</p>
           </div>
         </li>
-        <li class="polaroid" data-photo="kodis" style="--tilt: 0.8deg">
+        <li class="polaroid" data-photo="kodis">
           <div class="polaroid-photo" data-initials="KP"></div>
           <div class="polaroid-body">
-            <p class="polaroid-caption">my first dataset</p>
+            <p class="polaroid-caption">run for the dogs</p>
             <p class="polaroid-date">May — Aug 2017 · Online</p>
             <h3 class="polaroid-role">Research Assistant</h3>
             <p class="polaroid-org">Kodis Paw-a-thon</p>
-            <p class="polaroid-note">Supported research activities across data collection, organisation and reporting.</p>
+            <p class="polaroid-note">Support for a fun-run raising money for pet cancer research — scouting possible collaborations, then organising the data it produced and writing it up.</p>
           </div>
         </li>
-      </ul>
+            </ul>
+          </div>
+        </div>
+        <p class="ring-live" aria-live="polite" aria-atomic="true"></p>
+      </div>
 
       <div class="rail-progress" aria-hidden="true"><i></i></div>
     </div>
@@ -388,7 +396,7 @@
 <script src="assets/js/stickerart.js"></script>
 <script src="assets/js/stickers.js"></script>
 <script src="assets/js/puzzle.js"></script>
-<script src="assets/js/polaroids.js"></script>
+<script src="assets/js/carousel.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

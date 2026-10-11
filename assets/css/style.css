@@ -705,14 +705,16 @@
     .project { grid-template-columns: 1fr; gap: var(--space-3); }
   }
 
-  /* ---------- work history: a strip of polaroids ----------
-     The strip scrolls sideways on its own; the page keeps scrolling down
-     past it. data-lenis-prevent-horizontal in the markup hands sideways
-     gestures to the browser and leaves vertical ones to the smooth scroll,
-     so a downward swipe over the strip still moves the page.
+  /* ---------- work history: a carousel on a circle ----------
+     The cards sit on a ring in 3D. Each is turned to its place around the
+     circle, pushed out to the radius, then counter-rotated back square to the
+     viewer — billboarded — because a card here is mostly text, and text on a
+     surface turned away from you is unreadable. The ring still reads as a
+     ring: the cards travel on it and recede with depth, they just never go
+     edge-on.
 
-     Nothing here shrinks to fit: the card is a fixed, readable width and
-     the type inside it is the same size as body copy elsewhere. */
+     Nothing here shrinks to fit: the card is a fixed, readable width and the
+     type inside it is the same size as body copy elsewhere. */
   .rail { margin-top: var(--space-10); }
 
   .rail-head {
@@ -731,45 +733,64 @@
     border-radius: var(--radius-round);
     background: var(--surface);
     cursor: pointer;
-    transition: transform .2s var(--ease-out), background-color .2s var(--ease-out),
-                opacity .2s var(--ease-out);
+    transition: transform .2s var(--ease-out), background-color .2s var(--ease-out);
   }
   .rail-btn:hover { transform: translateY(-2px); background: var(--bg); }
-  .rail-btn[disabled] { opacity: .3; cursor: default; transform: none; }
 
-  .rail-track {
-    display: flex; gap: var(--space-8);
-    /* full-bleed: the strip runs to both screen edges, the page gutter
-       becomes scroll padding so the first card still lines up with the text */
+  .ring {
+    position: relative;
+    height: calc(var(--ring-h, 460px) + var(--space-6));
     margin-inline: calc(var(--edge) * -1);
-    padding: var(--space-4) var(--edge) var(--space-10);
-    overflow-x: auto; overflow-y: hidden;
-    scroll-padding-inline: var(--edge);
-    overscroll-behavior-x: contain;
-    list-style: none;
+    /* sideways gestures are the ring's, vertical ones stay the page's — this
+       is what lets a downward swipe over the carousel still scroll on. */
+    touch-action: pan-y;
     cursor: grab;
+    outline-offset: 6px;
   }
-  .rail-track.is-dragging { cursor: grabbing; }
-  .rail-track.is-dragging * { pointer-events: none; }
-  .rail-track:focus-visible { outline: 2px solid var(--label-1); outline-offset: 4px; }
+  .ring.is-dragging { cursor: grabbing; }
+  .ring:focus-visible { outline: 2px solid var(--label-1); }
+
+  .ring-stage { position: absolute; inset: 0; }
+  .ring-camera,
+  .ring-track {
+    position: absolute;
+    top: var(--space-4); left: 50%;
+    width: 0; height: 0;
+    transform-style: preserve-3d;
+  }
+  .ring-track { list-style: none; }
+
+  .ring-live {
+    position: absolute; width: 1px; height: 1px;
+    overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
 
   .polaroid {
-    flex: 0 0 auto;
-    width: clamp(15.5rem, 78vw, 20rem);
+    position: absolute;
+    top: 0; left: 0;
+    width: clamp(15.5rem, 76vw, 19rem);
+    margin-left: calc(clamp(15.5rem, 76vw, 19rem) / -2);
     padding: 14px 14px 20px;
     background: var(--sticker-paper);
     border-radius: 3px;
+    /* --face is 1 at the front of the ring, 0 at the back; everything that
+       recedes with depth reads from it */
+    opacity: calc(0.18 + 0.82 * var(--face, 1));
     box-shadow:
       0 1px 2px oklch(0 0 0 / .10),
-      0 12px 28px oklch(0 0 0 / .13);
-    transform: rotate(var(--tilt, 0deg));
-    transition: transform .4s var(--ease-soft), box-shadow .4s var(--ease-soft);
+      0 12px 28px oklch(0 0 0 / calc(.16 * var(--face, 1)));
+    transition: opacity .25s linear;
+    /* a card behind the front one is scenery: it must not swallow a tap */
+    pointer-events: none;
   }
-  .rail-track:not(.is-dragging) .polaroid:hover {
-    transform: rotate(0deg) translateY(-6px);
-    box-shadow:
-      0 2px 4px oklch(0 0 0 / .10),
-      0 20px 40px oklch(0 0 0 / .17);
+  .polaroid.is-front { pointer-events: auto; }
+  .polaroid::after {
+    /* the ones off to the side sink into the ground rather than only fading */
+    content: ""; position: absolute; inset: 0;
+    border-radius: inherit;
+    background: var(--bg);
+    opacity: calc((1 - var(--face, 1)) * .62);
+    pointer-events: none;
   }
 
   /* the photo well. An image drops in here when one exists; until then the
