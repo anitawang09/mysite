@@ -883,6 +883,33 @@
     .polaroid { padding: 11px 11px 16px; }
   }
 
+  /* ---------- contact: its own band ----------
+     The closing section is lifted onto the raised surface and runs edge to
+     edge, so it reads as a separate block rather than one more stop on the
+     same ground. The cursor grid lives inside that band and nowhere else. */
+  .contact-band {
+    position: relative;
+    isolation: isolate;
+    margin-top: var(--space-16);
+    padding-block: var(--space-12);
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    overflow: hidden;
+  }
+
+  .cursor-grid {
+    position: absolute; inset: 0; z-index: 0;
+    display: block;
+    /* The lattice colour, read from here by the script so it follows the
+       palette. Never takes a pointer event — the band listens instead, or
+       this canvas would sit between the reader and the email link. */
+    color: var(--red);
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(130% 100% at 50% 50%, black 42%, transparent 78%);
+            mask-image: radial-gradient(130% 100% at 50% 50%, black 42%, transparent 78%);
+  }
+  .contact-band > .section { position: relative; z-index: 1; }
+
   /* ---------- contact ---------- */
   .contact { text-align: center; }
   .contact .section-head { justify-content: center; }
