@@ -259,17 +259,19 @@
   .nav {
     position: fixed; inset: 0 0 auto; z-index: 500;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 22px var(--edge);
+    padding: 16px var(--edge);
     transition: transform .4s var(--ease-signature), background .4s var(--ease-out),
                 padding .3s var(--ease-out), box-shadow .3s var(--ease-out);
   }
   .nav.scrolled {
-    padding: 14px var(--edge);
+    padding: 10px var(--edge);
     background: color-mix(in srgb, var(--bg) 85%, transparent);
     backdrop-filter: blur(10px);
     box-shadow: inset 0 -1px 0 0 var(--line);
   }
   .nav.hide { transform: translateY(-110%); }
+  /* held in view while the nav's pill travels to a clicked section */
+  .nav.hide.is-travelling { transform: none; }
 
   .nav-logo {
     font-family: var(--font-name);
@@ -278,31 +280,79 @@
     padding-bottom: 2px;
   }
 
-  .nav-links {
-    display: flex; align-items: center; gap: var(--space-8);
-    font-family: var(--font-mono); font-size: var(--text-sm);
+  /* ---------- gooey nav ----------
+     The pill, the droplets and the hover glow are drawn on a canvas by
+     gooeynav.js; this is the frame, the type, and the duplicate label list
+     that shows in the pill's ink through the blob-shaped clip. Every colour
+     comes from the page's own tokens. */
+  .gooey-nav {
+    --gn-pad: 6px; --gn-gap: 4px; --gn-font: 14px; --gn-x: 16px; --gn-y: 9px;
+    --gn-frame: color-mix(in srgb, var(--surface) 70%, transparent);
+    --gn-frame-edge: var(--line);
+    --gn-frame-highlight: rgb(255 255 255 / .9);
+    --gn-frame-shadow:
+      0 14px 28px -16px oklch(0.255 0.010 268 / .38),
+      0 4px 10px -6px oklch(0.255 0.010 268 / .18);
+    --gn-ink: var(--label-1);
+    --gn-muted: var(--label-2);
+    --gn-pill: var(--ink);
+    --gn-active-ink: var(--surface);
+    position: relative;
+    display: inline-flex; max-width: 100%;
+    font-family: var(--font-mono);
+    font-size: var(--gn-font); line-height: 1.2;
   }
-  .nav-links a {
-    position: relative; padding: 4px 0;
-    color: var(--label-2);
-    transition: color .25s var(--ease-out);
-  }
-  .nav-links a::after {
-    content: ""; position: absolute; left: 0; bottom: 0;
-    width: 0; height: 1px; background: var(--red);
-    transition: width .3s var(--ease-out);
-  }
-  .nav-links a:hover { color: var(--label-1); }
-  .nav-links a:hover::after { width: 100%; }
+  .gooey-nav--sm { --gn-pad: 5px; --gn-gap: 2px; --gn-font: 13px; --gn-x: 13px; --gn-y: 7px; }
+  .gooey-nav--lg { --gn-pad: 7px; --gn-gap: 6px; --gn-font: 16px; --gn-x: 20px; --gn-y: 11px; }
 
-  .nav-cta {
-    border: 1px solid var(--label-1);
-    border-radius: var(--radius-md);
-    padding: 8px 16px !important;
-    color: var(--label-1) !important;
+  .gooey-nav--framed {
+    padding: var(--gn-pad);
+    border-radius: 999px;
+    background: var(--gn-frame);
+    box-shadow: var(--gn-frame-shadow);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+            backdrop-filter: blur(20px) saturate(1.6);
   }
-  .nav-cta::after { display: none; }
-  .nav-cta:hover { background: var(--label-1); color: var(--bg) !important; }
+  .gooey-nav__rim {
+    position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    box-shadow: inset 0 0 0 1px var(--gn-frame-edge), inset 0 1px 0 var(--gn-frame-highlight);
+  }
+
+  .gooey-nav__stage { position: relative; max-width: 100%; }
+  .gooey-nav__canvas { position: absolute; top: 0; left: 0; pointer-events: none; }
+  .gooey-nav__fallback {
+    position: absolute; top: 0; left: 0; display: none;
+    border-radius: 999px; background: var(--gn-pill); pointer-events: none;
+  }
+
+  .gooey-nav__list {
+    position: relative;
+    display: flex; flex-wrap: wrap; gap: var(--gn-gap);
+    margin: 0; padding: 0; list-style: none;
+  }
+  .gooey-nav__list--active {
+    position: absolute; inset: 0;
+    color: var(--gn-active-ink);
+    visibility: hidden; clip-path: inset(100%);
+    pointer-events: none;
+  }
+  .gooey-nav__item { display: flex; }
+  .gooey-nav__link {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: var(--gn-y) var(--gn-x);
+    border-radius: 999px;
+    color: var(--gn-muted);
+    font: inherit; font-weight: 500; text-decoration: none; white-space: nowrap;
+    cursor: pointer;
+    transition: color .2s ease;
+  }
+  .gooey-nav__list--active .gooey-nav__link { color: inherit; }
+  .gooey-nav__item[data-active] .gooey-nav__link { color: var(--gn-ink); }
+  .gooey-nav__link:focus-visible { outline: 2px solid var(--gn-ink); outline-offset: 2px; }
+
+  @media (hover: hover) {
+    .gooey-nav__link:hover { color: var(--gn-ink); }
+  }
 
   .nav-toggle {
     display: none; flex-direction: column; gap: 5px;
@@ -326,7 +376,7 @@
   .mobile-menu.open { transform: translateY(0); }
 
   @media (max-width: 48rem) {
-    .nav-links { display: none; }
+    .gooey-nav { display: none; }
     .nav-toggle { display: flex; }
   }
 
@@ -901,12 +951,23 @@
     position: absolute; inset: 0; z-index: 0;
     display: block;
     /* The lattice colour, read from here by the script so it follows the
-       palette. Never takes a pointer event — the band listens instead, or
-       this canvas would sit between the reader and the email link. */
-    color: var(--red);
+       palette. The page's blue rather than its red: red on this cool ground
+       read as pink blotches, where blue sits in the same family as the
+       periwinkle around it. Never takes a pointer event — the band listens
+       instead, or this canvas would sit between the reader and the email. */
+    color: var(--blue);
     pointer-events: none;
-    -webkit-mask-image: radial-gradient(130% 100% at 50% 50%, black 42%, transparent 78%);
-            mask-image: radial-gradient(130% 100% at 50% 50%, black 42%, transparent 78%);
+    /* Fade out toward all four edges, so lit cells dissolve before they reach
+       the band's boundary instead of being sliced off by it. An elliptical
+       mask used to do this and drew its own visible curve across the cells. */
+    -webkit-mask-image:
+      linear-gradient(to right, transparent, black 18%, black 82%, transparent),
+      linear-gradient(to bottom, transparent, black 26%, black 74%, transparent);
+            mask-image:
+      linear-gradient(to right, transparent, black 18%, black 82%, transparent),
+      linear-gradient(to bottom, transparent, black 26%, black 74%, transparent);
+    -webkit-mask-composite: source-in;
+            mask-composite: intersect;
   }
   .contact-band > .section { position: relative; z-index: 1; }
 

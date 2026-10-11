@@ -8,7 +8,7 @@
  * brightness; cells hold, then fade; a click sends a ring outward that hands
  * its energy to cells as it passes. The loop sleeps as soon as nothing is lit.
  *
- * Three things are done differently here, for this page:
+ * Four things are done differently here, for this page:
  *
  *  - The canvas never takes a pointer event. It sits behind the contact copy,
  *    and the original listens on its own container, which would have put a
@@ -16,6 +16,11 @@
  *    instead and passes coordinates down.
  *  - The colour is read from CSS rather than passed as a hex prop, so it
  *    follows the palette along with everything else on the page.
+ *  - The cells are small and the falloff is steep. A big cell makes the
+ *    boundary of the lit patch a coarse staircase, and a falloff that is
+ *    still visible at the radius draws a rim around it; both read as a cut.
+ *    Here the cells at the boundary are close to invisible, and the click
+ *    ring is a swell that fades with distance rather than an outline.
  *  - It only answers a real cursor. On a touch screen there is nothing
  *    hovering, and lighting cells under a finger mid-scroll is just noise.
  */
@@ -34,18 +39,22 @@
 
   /* ---- settings ---------------------------------------------------------- */
 
-  const CELL = 64;
-  const RADIUS = 150;
-  const HOLD = 380;          // ms a cell stays lit before it starts fading
-  const FADE = 900;          // ms a fully lit cell takes to fade out
-  const LINE_WIDTH = 1.1;
-  const MAX_OPACITY = 0.5;   // it sits behind text, so it never goes full strength
-  const FILL_OPACITY = 0.07;
-  const LATTICE = 0.05;      // the faint always-there grid, echoing the page's own
-  const CELL_RADIUS = 3;
-  const PULSE_SPEED = 620;   // px per second
+  const CELL = 34;           // small, so the edge of the lit patch steps finely rather than in blocks
+  const RADIUS = 190;
+  const HOLD = 320;          // ms a cell stays lit before it starts fading
+  const FADE = 1100;         // ms a fully lit cell takes to fade out
+  const LINE_WIDTH = 1;
+  const MAX_OPACITY = 0.42;  // it sits behind text, so it never goes full strength
+  const FILL_OPACITY = 0.05;
+  const LATTICE = 0.07;      // the faint always-there grid, echoing the page's own
+  const CELL_RADIUS = 2;
+  const PULSE_SPEED = 560;   // px per second
+  const PULSE_BAND = 4;      // cells wide: the click ring is a soft swell, not a hard outline
 
-  const smooth = (t) => t * t * (3 - 2 * t);
+  /* smoothstep, squared: zero slope at both ends, and at the radius so close to
+     nothing that the cells on the boundary are invisible — which is the point.
+     The plain smoothstep left them at a visible 10-20% and drew a rim. */
+  const smooth = (t) => { const s = t * t * (3 - 2 * t); return s * s; };
 
   /* ---- state ------------------------------------------------------------- */
 
@@ -63,20 +72,15 @@
      browser understands, which is the point of keeping it in CSS. */
   function readInk() {
     const css = getComputedStyle(canvas).color;
-    try {
-      ctx.save();
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, 1, 1);
-      ctx.fillStyle = css;
-      ctx.fillRect(0, 0, 1, 1);
-      const d = ctx.getImageData(0, 0, 1, 1).data;
-      if (d[3] > 0) ink = [d[0], d[1], d[2]];
-      ctx.clearRect(0, 0, 1, 1);
-      ctx.restore();
-    } catch (err) {
-      const m = css.match(/\d+(\.\d+)?/g);          // rgb() fallback
-      if (m && m.length >= 3) ink = [+m[0], +m[1], +m[2]];
-    }
+    // a 1x1 scratch canvas, so the readback never touches the drawing surface
+    const probe = document.createElement('canvas');
+    probe.width = probe.height = 1;
+    const p = probe.getContext('2d', { willReadFrequently: true });
+    if (!p) return;
+    p.fillStyle = css;
+    p.fillRect(0, 0, 1, 1);
+    const d = p.getImageData(0, 0, 1, 1).data;
+    if (d[3] > 0) ink = [d[0], d[1], d[2]];
   }
 
   function rebuild() {
@@ -144,24 +148,27 @@
     ctx.clearRect(0, 0, w, h);
     lattice(r, g, b);
 
-    // expanding click rings hand their energy to cells as they pass
+    // expanding click rings hand their energy to cells as they pass: strongest
+    // at the ring's crest, falling off either side of it, and weaker the
+    // further out it has travelled — so it dissolves rather than hitting a wall
     const reach = Math.hypot(w, h);
+    const halfBand = (PULSE_BAND * CELL) / 2;
     for (let pi = pulses.length - 1; pi >= 0; pi--) {
       const p = pulses[pi];
       const ringR = ((now - p.t0) / 1000) * PULSE_SPEED;
       if (ringR > reach) { pulses.splice(pi, 1); continue; }
-      const band2 = CELL;
-      const minCol = Math.max(0, Math.floor((p.x - ringR - band2 - offX) / CELL));
-      const maxCol = Math.min(cols - 1, Math.floor((p.x + ringR + band2 - offX) / CELL));
-      const minRow = Math.max(0, Math.floor((p.y - ringR - band2 - offY) / CELL));
-      const maxRow = Math.min(rows - 1, Math.floor((p.y + ringR + band2 - offY) / CELL));
+      const vigour = Math.pow(1 - ringR / reach, 1.4);
+      const minCol = Math.max(0, Math.floor((p.x - ringR - halfBand - offX) / CELL));
+      const maxCol = Math.min(cols - 1, Math.floor((p.x + ringR + halfBand - offX) / CELL));
+      const minRow = Math.max(0, Math.floor((p.y - ringR - halfBand - offY) / CELL));
+      const maxRow = Math.min(rows - 1, Math.floor((p.y + ringR + halfBand - offY) / CELL));
       for (let cr = minRow; cr <= maxRow; cr++) {
         for (let cc = minCol; cc <= maxCol; cc++) {
           const i = cr * cols + cc;
-          const d = Math.hypot(centreX(i) - p.x, centreY(i) - p.y);
-          if (Math.abs(d - ringR) < band2 / 2 && MAX_OPACITY > alphas[i]) {
-            alphas[i] = MAX_OPACITY; touched[i] = now;
-          }
+          const off = Math.abs(Math.hypot(centreX(i) - p.x, centreY(i) - p.y) - ringR);
+          if (off >= halfBand) continue;
+          const level = smooth(1 - off / halfBand) * MAX_OPACITY * vigour;
+          if (level > alphas[i]) { alphas[i] = level; touched[i] = now; }
         }
       }
     }
@@ -181,17 +188,13 @@
       anyVisible = true;
 
       const cx = centreX(i), cy = centreY(i);
-      const grad = ctx.createRadialGradient(cx, cy, half * 0.1, cx, cy, CELL);
-      grad.addColorStop(0, `rgba(${r}, ${g}, ${b}, ${a})`);
-      grad.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
-
       ctx.beginPath();
       ctx.roundRect(cx - half + 0.5, cy - half + 0.5, CELL - 1, CELL - 1, CELL_RADIUS);
       if (FILL_OPACITY > 0) {
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a * FILL_OPACITY})`;
         ctx.fill();
       }
-      ctx.strokeStyle = grad;
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
       ctx.lineWidth = LINE_WIDTH;
       ctx.stroke();
     }

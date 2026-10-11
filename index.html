@@ -38,12 +38,19 @@
 
 <header class="nav" id="nav">
   <a href="#hero" class="nav-logo magnetic">Anita Wang</a>
-  <nav class="nav-links">
-    <a href="#about" class="magnetic">About</a>
-    <a href="#skills" class="magnetic">Skills</a>
-    <a href="#work" class="magnetic">Work</a>
-    <a href="#experience" class="magnetic">Experience</a>
-    <a href="#contact" class="nav-cta magnetic">Contact</a>
+  <!-- The links are plain anchors and work without any script; gooeynav.js
+       adds the canvas and the moving pill on top of them. -->
+  <nav class="gooey-nav gooey-nav--md gooey-nav--framed" id="gooeyNav" aria-label="Sections">
+    <span class="gooey-nav__rim"></span>
+    <div class="gooey-nav__stage">
+      <ul class="gooey-nav__list">
+        <li class="gooey-nav__item"><a class="gooey-nav__link" href="#about">About</a></li>
+        <li class="gooey-nav__item"><a class="gooey-nav__link" href="#skills">Skills</a></li>
+        <li class="gooey-nav__item"><a class="gooey-nav__link" href="#work">Work</a></li>
+        <li class="gooey-nav__item"><a class="gooey-nav__link" href="#experience">Experience</a></li>
+        <li class="gooey-nav__item"><a class="gooey-nav__link" href="#contact">Contact</a></li>
+      </ul>
+    </div>
   </nav>
   <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
     <span></span><span></span>
@@ -418,6 +425,7 @@
 <script src="assets/js/puzzle.js"></script>
 <script src="assets/js/carousel.js"></script>
 <script src="assets/js/cursorgrid.js"></script>
+<script src="assets/js/gooeynav.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>
