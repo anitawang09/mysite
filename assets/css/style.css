@@ -263,12 +263,9 @@
     transition: transform .4s var(--ease-signature), background .4s var(--ease-out),
                 padding .3s var(--ease-out), box-shadow .3s var(--ease-out);
   }
-  .nav.scrolled {
-    padding: 10px var(--edge);
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(10px);
-    box-shadow: inset 0 -1px 0 0 var(--line);
-  }
+  /* No strip behind the header once scrolled: the frosted nav pill carries
+     its own ground, so the header is just the name and the pill. */
+  .nav.scrolled { padding: 10px var(--edge); }
   .nav.hide { transform: translateY(-110%); }
   /* held in view while the nav's pill travels to a clicked section */
   .nav.hide.is-travelling { transform: none; }
@@ -950,24 +947,13 @@
   .cursor-grid {
     position: absolute; inset: 0; z-index: 0;
     display: block;
-    /* The lattice colour, read from here by the script so it follows the
-       palette. The page's blue rather than its red: red on this cool ground
-       read as pink blotches, where blue sits in the same family as the
-       periwinkle around it. Never takes a pointer event — the band listens
-       instead, or this canvas would sit between the reader and the email. */
+    /* Read by the script so both follow the palette: lit cells in the page's
+       blue, and the lattice in the same ink as the page's own grid, which it
+       continues. Never takes a pointer event — the band listens instead, or
+       this canvas would sit between the reader and the email link. */
     color: var(--blue);
+    --lattice: var(--ink);
     pointer-events: none;
-    /* Fade out toward all four edges, so lit cells dissolve before they reach
-       the band's boundary instead of being sliced off by it. An elliptical
-       mask used to do this and drew its own visible curve across the cells. */
-    -webkit-mask-image:
-      linear-gradient(to right, transparent, black 18%, black 82%, transparent),
-      linear-gradient(to bottom, transparent, black 26%, black 74%, transparent);
-            mask-image:
-      linear-gradient(to right, transparent, black 18%, black 82%, transparent),
-      linear-gradient(to bottom, transparent, black 26%, black 74%, transparent);
-    -webkit-mask-composite: source-in;
-            mask-composite: intersect;
   }
   .contact-band > .section { position: relative; z-index: 1; }
 

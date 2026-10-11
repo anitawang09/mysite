@@ -39,14 +39,23 @@
 
   /* ---- settings ---------------------------------------------------------- */
 
-  const CELL = 34;           // small, so the edge of the lit patch steps finely rather than in blocks
+  /* The page's background grid runs columns every --grid-step and rows every
+     twice that. The cells here are a third of a column, aligned to the same
+     origin, so every third line here lands exactly on a line of the page's
+     grid and the band reads as that grid continuing, subdivided — not as a
+     second lattice laid over the first. */
+  const STEP = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--grid-step')) || 104;
+  const DIV = 3;
+  const CELL = STEP / DIV;   // ~35px: small, so the lit patch's edge steps finely
   const RADIUS = 190;
   const HOLD = 320;          // ms a cell stays lit before it starts fading
   const FADE = 1100;         // ms a fully lit cell takes to fade out
   const LINE_WIDTH = 1;
   const MAX_OPACITY = 0.42;  // it sits behind text, so it never goes full strength
   const FILL_OPACITY = 0.05;
-  const LATTICE = 0.07;      // the faint always-there grid, echoing the page's own
+  const MINOR = 0.035;       // the subdividing lines, barely there
+  const MAJOR_COL = 0.10;    // the page grid's own lines, at the page's own strengths
+  const MAJOR_ROW = 0.06;
   const CELL_RADIUS = 2;
   const PULSE_SPEED = 560;   // px per second
   const PULSE_BAND = 4;      // cells wide: the click ring is a soft swell, not a hard outline
@@ -61,26 +70,33 @@
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   let cols = 0, rows = 0, offX = 0, offY = 0, w = 0, h = 0;
   let alphas = new Float32Array(0);
+  let edge = new Float32Array(0);   // per-cell fade toward the band's edges
   let touched = new Float64Array(0);
   const pulses = [];
   let raf = 0, running = false, lastFrame = 0, visible = true;
-  let ink = [33, 35, 40];
+  let ink = [33, 35, 40];       // lit cells
+  let rule = [33, 35, 40];      // the lattice: the page grid's colour
 
   /* The palette is authored in oklch, and that is exactly what computed style
      hands back — parsing numbers out of it would read 0.585 as a red channel.
      Painting one pixel and reading it back resolves any colour syntax the
      browser understands, which is the point of keeping it in CSS. */
-  function readInk() {
-    const css = getComputedStyle(canvas).color;
-    // a 1x1 scratch canvas, so the readback never touches the drawing surface
+  /* Colours are read from CSS so they follow the palette. The palette is
+     authored in oklch, so each is painted to a scratch pixel and read back. */
+  function resolve(css, fallback) {
     const probe = document.createElement('canvas');
     probe.width = probe.height = 1;
     const p = probe.getContext('2d', { willReadFrequently: true });
-    if (!p) return;
+    if (!p || !css) return fallback;
     p.fillStyle = css;
     p.fillRect(0, 0, 1, 1);
     const d = p.getImageData(0, 0, 1, 1).data;
-    if (d[3] > 0) ink = [d[0], d[1], d[2]];
+    return d[3] > 0 ? [d[0], d[1], d[2]] : fallback;
+  }
+  function readInk() {
+    const cs = getComputedStyle(canvas);
+    ink = resolve(cs.color, ink);
+    rule = resolve(cs.getPropertyValue('--lattice').trim(), rule);
   }
 
   function rebuild() {
@@ -91,13 +107,24 @@
     canvas.style.width = w + 'px';
     canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cols = Math.ceil(w / CELL) + 1;
+    // the page grid is anchored to the window's left edge; so is this
+    const left = band.getBoundingClientRect().left;
+    offX = -(((left % CELL) + CELL) % CELL);
+    offY = 0;
+    cols = Math.ceil((w - offX) / CELL) + 1;
     rows = Math.ceil(h / CELL) + 1;
-    // centre the lattice so the edge cells crop evenly on both sides
-    offX = (w - cols * CELL) / 2;
-    offY = (h - rows * CELL) / 2;
     alphas = new Float32Array(cols * rows);
     touched = new Float64Array(cols * rows);
+    // Lit cells fade out toward the band's edges, so they dissolve before the
+    // boundary instead of being sliced off by it. This used to be a CSS mask
+    // on the whole canvas, which also faded the lattice — and the lattice has
+    // to run right to the edge to meet the page's grid above it.
+    edge = new Float32Array(cols * rows);
+    const ramp = (d, span) => { const t = Math.min(1, Math.max(0, d / span)); return t * t * (3 - 2 * t); };
+    for (let i = 0; i < edge.length; i++) {
+      const x = centreX(i), y = centreY(i);
+      edge[i] = ramp(Math.min(x, w - x), w * 0.16) * ramp(Math.min(y, h - y), h * 0.22);
+    }
     readInk();
   }
 
@@ -125,20 +152,33 @@
 
   /* ---- paint ------------------------------------------------------------- */
 
-  function lattice(r, g, b) {
-    if (LATTICE <= 0) return;
-    ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${LATTICE})`;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    for (let c = 0; c <= cols; c++) {
-      const x = Math.round(offX + c * CELL) + 0.5;
-      ctx.moveTo(x, 0); ctx.lineTo(x, h);
-    }
-    for (let r2 = 0; r2 <= rows; r2++) {
-      const y = Math.round(offY + r2 * CELL) + 0.5;
-      ctx.moveTo(0, y); ctx.lineTo(w, y);
-    }
-    ctx.stroke();
+  function lattice() {
+    const [r, g, b] = rule;
+    const line = (alpha, vertical, test) => {
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      if (vertical) {
+        for (let c = 0; c <= cols; c++) {
+          if (!test(c)) continue;
+          const x = Math.round(offX + c * CELL) + 0.5;
+          ctx.moveTo(x, 0); ctx.lineTo(x, h);
+        }
+      } else {
+        for (let r2 = 0; r2 <= rows; r2++) {
+          if (!test(r2)) continue;
+          const y = Math.round(offY + r2 * CELL) + 0.5;
+          ctx.moveTo(0, y); ctx.lineTo(w, y);
+        }
+      }
+      ctx.stroke();
+    };
+    // a column of the page grid is DIV cells wide, a row of it 2·DIV cells tall
+    const colIndex = (c) => Math.round((offX + c * CELL) / CELL);
+    line(MINOR, true, (c) => colIndex(c) % DIV !== 0);
+    line(MINOR, false, (r2) => r2 % (2 * DIV) !== 0);
+    line(MAJOR_COL, true, (c) => colIndex(c) % DIV === 0);
+    line(MAJOR_ROW, false, (r2) => r2 % (2 * DIV) === 0);
   }
 
   function draw(now) {
@@ -146,7 +186,7 @@
     lastFrame = now;
     const [r, g, b] = ink;
     ctx.clearRect(0, 0, w, h);
-    lattice(r, g, b);
+    lattice();
 
     // expanding click rings hand their energy to cells as they pass: strongest
     // at the ring's crest, falling off either side of it, and weaker the
@@ -187,14 +227,16 @@
       }
       anyVisible = true;
 
+      const shown = a * edge[i];
+      if (shown < 0.004) continue;
       const cx = centreX(i), cy = centreY(i);
       ctx.beginPath();
       ctx.roundRect(cx - half + 0.5, cy - half + 0.5, CELL - 1, CELL - 1, CELL_RADIUS);
       if (FILL_OPACITY > 0) {
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a * FILL_OPACITY})`;
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${shown * FILL_OPACITY})`;
         ctx.fill();
       }
-      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
+      ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${shown})`;
       ctx.lineWidth = LINE_WIDTH;
       ctx.stroke();
     }
@@ -212,7 +254,7 @@
 
   function paintStatic() {
     ctx.clearRect(0, 0, w, h);
-    lattice(ink[0], ink[1], ink[2]);
+    lattice();
   }
 
   /* ---- input -------------------------------------------------------------- */
